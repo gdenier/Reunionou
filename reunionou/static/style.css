@@ -1,0 +1,262 @@
+@font-face {
+    font-family: "Circular Book";
+    src: url("fonts/CircularStd-Book.woff") format("woff"),
+        url("fonts/CircularStd-Book.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Circular Bold";
+    src: url("fonts/CircularStd-Bold.woff") format("woff"),
+        url("fonts/CircularStd-Bold.woff2") format("woff2");
+}
+
+
+
+/* ALL */
+* {
+    margin: 0;
+    padding: 0; 
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    font-family: "Circular Book", sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+header, footer {
+    flex: none;
+}
+
+header {
+    margin-bottom: 50px;
+}
+
+textarea {
+    resize: none;
+}
+
+.input-group {
+    margin-bottom: 50px;
+}
+
+.retour {
+    padding: 15px;
+    margin: 0 0 50px 0;
+    background: #EEE;
+}
+
+.box {
+    flex: 1;
+}
+
+section {
+    display: flex;
+    flex: 1;
+    padding: 50px 0;
+    background: #EEE;
+}
+
+    section .container {
+        display: flex;
+    }
+
+        section .box {
+            flex: 1;
+        }
+
+            section .panel {
+                min-width: 100%;
+                min-height: 100%;
+                margin: 0;
+                padding: 50px;
+                border-radius: 16px;
+                box-shadow: rgba(0, 0, 0, 0.16) 0 16px 16px;
+            }
+/* END ALL */
+
+
+
+/* REGISTER - LOGIN */
+#register {
+    background: #34f1ff;
+    background: -moz-linear-gradient(45deg, #34f1ff 0%, #89ff67 100%);
+    background: -webkit-linear-gradient(45deg, #34f1ff 0%, #89ff67 100%);
+    background: linear-gradient(45deg, #34f1ff 0%, #89ff67 100%);
+}
+
+#login {
+    background: #FF3434;
+    background: -moz-linear-gradient(45deg, #FF3434 0%, #FFAE67 100%);
+    background: -webkit-linear-gradient(45deg, #FF3434 0%, #FFAE67 100%);
+    background: linear-gradient(45deg, #FF3434 0%, #FFAE67 100%);
+}
+
+    #register .container, 
+    #login .container {
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+        #register .panel, 
+        #login .panel {
+            width: 500px;
+            min-height: 600px;
+            margin: 0;
+            padding: 50px;
+
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: rgba(0, 0, 0, 0.16) 0 16px 16px;
+        }
+
+            #register h1, 
+            #login h1 {
+                font-family: "Circular Bold", sans-serif;
+                font-size: 24px;
+                color: #707070;
+                margin: 0 0 50px 0;
+            }
+
+            #register .input-group, 
+            #login .input-group {
+                width: 350px;
+                margin: 0 auto 50px auto;
+            }
+
+                #register .input-group-addon, #register .form-control, 
+                #login .input-group-addon, #login .form-control {
+                    background: none;
+                    border: none;
+                    border-bottom: 2px solid #EEE;
+                    box-shadow: none;
+                    color: #DDD;
+                }
+
+                #register .form-control, 
+                #login .form-control {
+                    color: #707070;
+                }
+
+                #register .form-control::-webkit-input-placeholder, #register .form-control::-moz-placeholder, #register .form-control:-ms-input-placeholder, #register .form-control:-moz-placeholder, #register .form-control::placeholder,
+                #login .form-control::-webkit-input-placeholder, #login .form-control::-moz-placeholder, #login .form-control:-ms-input-placeholder, #login .form-control:-moz-placeholder, #login .form-control::placeholder {
+                    color: #DDD;
+                }
+
+            #register .btn.btn-primary,
+            #login .btn.btn-primary {
+                width: 350px;
+                height: 50px;
+                margin-bottom: 15px;
+                padding: 0;
+                background-color: #56f6c2;
+                border: none;
+                border-radius: 5px;
+                line-height: 50px;
+                box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
+                
+                font-family: "Circular Bold", sans-serif;
+                font-weight: bold;
+                font-size: 16px; 
+                color: #fff;
+            }
+
+            #login .btn.btn-primary {
+                background-color: #FF8255;
+            }
+/* END REGISTER - LOGIN */
+
+
+
+/* PROFILE */
+#profile .item {
+    margin-bottom: 50px;
+}
+/* END PROFILE */
+
+
+
+/* EVENT */
+#new_event .time {
+    display: flex;
+    justify-content: space-between
+}
+
+    #new_event .time .input-group {
+        width: 45%;
+    }
+
+#new_event .btn.btn.btn-primary, #search_event .btn.btn.btn-primary {
+    width: 350px;
+    height: 50px;
+    margin-bottom: 15px;
+    padding: 0;
+    background-color: #FF8255;
+    border: none;
+    border-radius: 5px;
+    line-height: 50px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px;
+    
+    font-family: "Circular Bold", sans-serif;
+    font-weight: bold;
+    font-size: 16px; 
+    color: #fff;
+}
+
+#search_event .input-group-addon, #search_event .form-control {
+    height: 50px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid #DDD;
+    box-shadow: none;
+    color: #CCC;
+}
+
+#detail_event .content {
+    display: flex;
+    min-height: 350px;
+}
+
+#detail_event .items {
+    flex: 1;
+}
+
+#detail_event .items > div {
+    width: 50%;
+    float: left;
+}
+
+#detail_event #map {
+    height: 100%;
+    float: right;
+}
+/* END EVENT */
+
+
+
+/* FOOTER */
+footer {
+    height: 80px;
+    display: flex;
+}
+
+    footer .container {
+        display: flex;
+        align-items: center;
+    }
+
+        footer .container h4 {
+            color: #707070;
+        }
+
+        footer .container h4:first-child {
+            flex: 1;
+        }
+/* END FOOTER */
