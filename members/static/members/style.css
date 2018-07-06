@@ -1,13 +1,13 @@
 @font-face {
     font-family: "Circular Book";
-    src: url("fonts/CircularStd-Book.woff") format("woff"),
-        url("fonts/CircularStd-Book.woff2") format("woff2");
+    src: url("../fonts/CircularStd-Book.woff") format("woff"),
+        url("../fonts/CircularStd-Book.woff2") format("woff2");
 }
 
 @font-face {
     font-family: "Circular Bold";
-    src: url("fonts/CircularStd-Bold.woff") format("woff"),
-        url("fonts/CircularStd-Bold.woff2") format("woff2");
+    src: url("../fonts/CircularStd-Bold.woff") format("woff"),
+        url("../fonts/CircularStd-Bold.woff2") format("woff2");
 }
 
 

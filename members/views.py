@@ -4,15 +4,15 @@ from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
-from .forms import LoginForm, SigninForm
+from .forms import SigninForm, SignupForm
 
 # Create your views here.
 
-def login_view(request):
+def signin_view(request):
     error = False
     
     if request.method == 'POST':
-        form = LoginForm(request.POST)
+        form = SigninForm(request.POST)
         if form.is_valid():
             user = authenticate(request, username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             if user is not None:
@@ -21,9 +21,9 @@ def login_view(request):
             else:
                 error = True
     else:
-        form = LoginForm()
+        form = SigninForm()
     
-    return render(request, 'members/login.html', locals())
+    return render(request, 'members/signin.html', locals())
 
 def home_view(request):
     username = request.session.get('_auth_user_id')
@@ -31,19 +31,22 @@ def home_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse('members:login'))
+    return HttpResponseRedirect(reverse('members:signin'))
 
-def signin_view(request):
+def signup_view(request):
     error = False
     if request.method == 'POST':
-        form = SigninForm(request.POST)
+        form = SignupForm(request.POST)
         if form.is_valid():
-            user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password'])
-            login(request, user)
-            return HttpResponseRedirect(reverse('members:home'))
+            if form.cleaned_data['password'] == form.cleaned_data['password_conf']:
+                user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password'])
+                login(request, user)
+                return HttpResponseRedirect(reverse('members:home'))
+            else:
+                error = True
         else:
             error = True
     else:
-        form = SigninForm()
+        form = SignupForm()
     
-    return render(request, 'members/signin.html', locals())
+    return render(request, 'members/signup.html', locals())
