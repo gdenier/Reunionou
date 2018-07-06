@@ -1,0 +1,47 @@
+{% extends "../main.html" %}
+
+{% block title %} {{ block.super }} - New Event {% endblock %}
+
+{% block content %}
+    <section id="new_event">
+        <div class="container">
+            <div class="box">
+                <div class="panel">
+                    <h1>Nouvel évènement</h1>
+                    <hr>
+                    <form method="POST" action="{% url 'events:new' user_id %}">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span class="input-group-text"><i class="fas fa-clipboard"></i></span>
+                                </div>
+                                {{ form.titre }}
+                            </div>
+
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
+                                </div>
+                                {{ form.desc }}
+                            </div>
+
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                </div>
+                                {{ form.date }}
+                            </div>
+
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span class="input-group-text"><i class="fas fa-map-marker"></i></span>
+                                </div>
+                                {{ form.adresse }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}

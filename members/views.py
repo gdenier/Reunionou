@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
 from .forms import SigninForm, SignupForm
+from events.models import Event
 
 # Create your views here.
 
@@ -26,7 +27,11 @@ def signin_view(request):
     return render(request, 'members/signin.html', locals())
 
 def home_view(request):
-    username = request.session.get('_auth_user_id')
+    user = User.objects.get(id=request.session.get('_auth_user_id'))
+    events = user.event_set.all()
+
+    event_exist = True if len(events) >= 0 else False
+
     return render(request, 'members/home.html', locals())
 
 def logout_view(request):
