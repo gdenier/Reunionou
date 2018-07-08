@@ -1,25 +1,38 @@
 {% load static %}
+
 <!DOCTYPE html>
-<html>
+<html class="has-navbar-fixed-top">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        
         <title>{% block title %}Reunionou{% endblock %}</title>
         <link rel="shortcut icon" type="image/x-icon" href="#"/>
+
+        {% comment %} FONTS {% endcomment %}
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+        {% comment %} CSS {% endcomment %}
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
         <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     </head>
     <body>
+        {% comment %} NAVIGATION {% endcomment %}
+        {% include "nav.html" %}
+        {% comment %} HEADER {% endcomment %}
         {% include "header.html" %}
 
-        {% block content %}
-        {% endblock %}
+        {% comment %} CONTENT {% endcomment %}
+        <section id="{% block page_name %}index{% endblock %}" class="section">
+            {% block content %}
+            {% endblock %}
+        </section>
         
+        {% comment %} FOOTER {% endcomment %}
         {% include "footer.html" %}
 
+        {% comment %} SCRIPTS {% endcomment %}
         <script type="text/javascript" src="{% static 'js/script.js' %}"></script>
     </body>
 </html>
