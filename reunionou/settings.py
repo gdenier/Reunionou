@@ -25,7 +25,7 @@ SECRET_KEY = '_=0me+g(29ioy92yzmqjxl^2miub%hb!n6!g#pa-!q9&xf7g8^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -78,10 +78,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'OPTIONS' : { "init_command": "SET foreign_key_checks = 0;" },
-        'NAME': 'Reunionou',
+        'NAME': 'reunionou',
         'USER': 'root',
-        'PASSWORD': 'redhate',
-        'HOST': '127.0.0.1',                     
+        'PASSWORD': '',
+        'HOST': 'localhost',
         'PORT': '',
     }
 }
