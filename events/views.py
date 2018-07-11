@@ -10,7 +10,7 @@ from .models import Event
 
 # Create your views here.
 
-def new_view(request, user_id):
+def New_view(request, user_id):
     error = False
 
     if request.method == 'POST':
@@ -19,11 +19,11 @@ def new_view(request, user_id):
             token_tmp = str(uuid.uuid4()).replace("-", "")
             event = Event(
                 titre=form.cleaned_data['titre'],
-                description=cleaned_data['desc'],
-                date=cleaned_data['date'],
+                description=form.cleaned_data['description'],
+                date=form.cleaned_data['date'],
                 token=token_tmp,
                 auteur_id=user_id,
-                adresse=cleaned_data['adresse']
+                adresse=form.cleaned_data['adresse']
             )
             event.save()
             return HttpResponseRedirect(reverse('members:home'))
