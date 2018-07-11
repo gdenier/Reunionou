@@ -81,9 +81,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'OPTIONS' : { "init_command": "SET foreign_key_checks = 0;" },
-        'NAME': 'reunionou',
+        'NAME': 'Reunionou',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'redhate',
         'HOST': 'localhost',
         'PORT': '',
     }
