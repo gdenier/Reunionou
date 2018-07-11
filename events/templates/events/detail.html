@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %} {{ block.super }} - Event {% endblock %}
+
+{% block content %}
+    {{ event.titre }}
+    <!-- aucune idée de la mise en page vus que tu a tout changé mais toutes les données sont dans event -->
+    <a href="{% url 'events:change' event.id %}">Modifier</a>
+{% endblock content %}
