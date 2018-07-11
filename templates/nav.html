@@ -1,0 +1,29 @@
+{% load static %}
+
+<nav class="navbar is-fixed-top is-light" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a href="/" class="navbar-item">
+            <img src="{% static 'img/logo.png' %}" alt="">
+        </a>
+
+        <a class="navbar-burger" role="button" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div id="navbar-menu" class="navbar-menu">
+        <div class="navbar-end">
+            <a href="" class="navbar-item">
+                Test
+            </a>
+            <a href="" class="navbar-item">
+                Create
+            </a>
+            <a href="" class="navbar-item">
+                Compte
+            </a>
+        </div>
+    </div>
+</nav>

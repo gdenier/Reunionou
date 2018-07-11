@@ -9,7 +9,7 @@ from events.models import Event
 
 # Create your views here.
 
-def signin_view(request):
+def login_view(request):
     error = False
     
     if request.method == 'POST':
@@ -24,7 +24,7 @@ def signin_view(request):
     else:
         form = SigninForm()
     
-    return render(request, 'members/signin.html', locals())
+    return render(request, 'members/login.html', locals())
 
 def home_view(request):
     user = User.objects.get(id=request.session.get('_auth_user_id'))
@@ -38,7 +38,7 @@ def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse('members:signin'))
 
-def signup_view(request):
+def register_view(request):
     error = False
     if request.method == 'POST':
         form = SignupForm(request.POST)
@@ -54,4 +54,4 @@ def signup_view(request):
     else:
         form = SignupForm()
     
-    return render(request, 'members/signup.html', locals())
+    return render(request, 'members/register.html', locals())
