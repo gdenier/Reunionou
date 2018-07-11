@@ -27,6 +27,7 @@ def New_view(request, user_id):
                     date=form.cleaned_data['date'],
                     token=token_tmp,
                     auteur_id=user_id,
+                    public=0,
                     adresse=form.cleaned_data['adresse']
                 )
                 event.save()
@@ -79,6 +80,15 @@ def Change_view(request, event_id):
             })
         
         return render(request, 'events/change.html', locals())
+
+    else:
+        return HttpResponseForbidden()
+
+def List_view(request):
+    if User.objects.filter(id=request.session.get('_auth_user_id')).exists():
+        
+        events = Event.objects.filter(public=1)
+        return render(request, 'events/list.html', locals())
 
     else:
         return HttpResponseForbidden()
