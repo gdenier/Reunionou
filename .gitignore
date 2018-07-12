@@ -1,6 +1,7 @@
 .vscode
 
-*/*/__pycache__
-*/init.py
+__pycache__/
+*.py[cod]
+*$py.class
 
 db.sqlite3
