@@ -135,4 +135,11 @@ STATICFILES_DIRS = (
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR + '/media/'
 
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.SUCCESS: "notification is-success",
+    messages.ERROR: "notification is-danger"
+}
+
 LOGIN_URL = '/accounts/login/'
