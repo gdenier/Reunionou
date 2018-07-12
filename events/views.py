@@ -41,15 +41,20 @@ def New_view(request, user_id):
     else:
         return HttpResponseForbidden()
 
-def Detail_view(request, event_id):
+def Detail_view(request, token):
+
+    event = get_object_or_404(Event, token=token)
 
     if User.objects.filter(id=request.session.get('_auth_user_id')).exists():
         
-        event = get_object_or_404(Event, id=event_id)
-        return render(request, 'events/detail.html', locals())
+        if event.auteur_id == int(request.session.get('_auth_user_id')):
+            return render(request, 'events/detail_auteur.html', locals())
+        
+        else:
+            return render(request, 'events/detail_public.html', locals())
     
     else:
-        return HttpResponseForbidden()
+        return render(request, 'events/detail_public.html', locals())    
 
 def Change_view(request, event_id):
     if User.objects.filter(id=request.session.get('_auth_user_id')).exists():
@@ -92,3 +97,15 @@ def List_view(request):
 
     else:
         return HttpResponseForbidden()
+
+def Inscription_view(request, token):
+    if User.objects.filter(id=request.session.get('_auth_user_id')).exists():
+        
+        #inscription avec info perso du compte
+        
+
+    else:
+        #demande si création
+            #si oui -> création puis inscription
+
+            #si non -> inscription avec compte temporaire et accès qu'a cet évènement

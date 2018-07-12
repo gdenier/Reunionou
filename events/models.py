@@ -17,3 +17,8 @@ class Event(models.Model):
 
     def __str__(self):
         return self.titre
+
+class Inviter(models.Model):
+    nom = models.CharField(max_length=80)
+    prenom = models.CharField(max_length=80)
+    age = models.PositiveSmallIntegerField()
