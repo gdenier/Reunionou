@@ -10,4 +10,5 @@ urlpatterns = [
     path('list/', views.List_view, name='list'),
     path('<token>/', views.Detail_view, name='detail'),
     path('inscription/<token>', views.Inscription_view, name='inscription'),
+    path('inscription/<token>/<args>', views.Inscription_view, name='inscription'),
 ]

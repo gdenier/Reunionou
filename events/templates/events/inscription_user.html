@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %} {{ block.super }} - Event Public {% endblock %}
+
+{% block content %}
+    <p>Vous allez partager vos infrmation avec l'organisateur de l'evenement, êtes-vous sur?</p>
+    <a href="{% url 'events:inscription' event.token 'accept' %}">Validez l'inscription</a>
+    <br>
+    <a href="{% url 'events:detail' event.token %}">Annuler</a>
+
+{% endblock content %}

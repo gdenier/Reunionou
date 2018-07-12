@@ -5,9 +5,12 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidde
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth import login
 
-from .forms import NewForm
-from .models import Event
+from .forms import NewForm, InvitForm
+from members.forms import SignupForm
+from .models import Event, Inviter
 
 # Create your views here.
 
@@ -44,6 +47,7 @@ def New_view(request, user_id):
 def Detail_view(request, token):
 
     event = get_object_or_404(Event, token=token)
+    inscrits = event.inviter_set.all()
 
     if User.objects.filter(id=request.session.get('_auth_user_id')).exists():
         
@@ -74,7 +78,7 @@ def Change_view(request, event_id):
 
                 event.save()
 
-                return HttpResponseRedirect(reverse('events:detail', args=[event.id]))
+                return HttpResponseRedirect(reverse('events:detail', args=[event.token]))
 
         else:
             form = NewForm(initial={
@@ -98,14 +102,70 @@ def List_view(request):
     else:
         return HttpResponseForbidden()
 
-def Inscription_view(request, token):
+def Inscription_view(request, token, args='default'):
+    event = Event.objects.get(token=token)
     if User.objects.filter(id=request.session.get('_auth_user_id')).exists():
         
         #inscription avec info perso du compte
-        
+        if args == 'accept':
+            user = User.objects.get(pk=request.session.get('_auth_user_id'))
+            inviter = Inviter(
+                nom=user.last_name,
+                prenom=user.first_name,
+                email=user.email,
+                event=event,
+                user_id=int(request.session.get('_auth_user_id')),
+            )
+            inviter.save()
+
+            return HttpResponseRedirect(reverse('events:detail', args=[token]))
+
+        return render(request, 'events/inscription_user.html', locals()) #a faire en fenetre "pop-up" plus tard je pense
 
     else:
-        #demande si création
-            #si oui -> création puis inscription
+        #si oui -> création puis inscription
+        if args == 'create':
+            if request.method == 'POST':
+                form = SignupForm(request.POST)
+                if form.is_valid():
+                    if form.cleaned_data['password'] == form.cleaned_data['password_conf']:
+                        user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password'])
+                        login(request, user)
 
-            #si non -> inscription avec compte temporaire et accès qu'a cet évènement
+                        inviter = Inviter(
+                            nom='new user',
+                            prenom=user.first_name,
+                            email=user.email,
+                            event=event,
+                            user_id=int(request.session.get('_auth_user_id')),
+                        )
+                        inviter.save()
+                        
+                        return HttpResponseRedirect(reverse('events:detail', args=[token]))
+            else:
+                form = SignupForm()
+            return render(request, 'events/create_user.html', locals())
+
+        #si non -> inscription avec compte temporaire et accès qu'a cet évènement
+        if args == 'invit':
+            if request.method == 'POST':
+                form = InvitForm(request.POST)
+                if form.is_valid():
+                    #if form.cleaned_data['password'] == form.cleaned_data['password_conf']:
+                    inviter = Inviter(
+                        nom=form.cleaned_data['nom'],
+                        prenom=form.cleaned_data['prenom'],
+                        age=form.cleaned_data['age'],
+                        email=form.cleaned_data['email'],
+                        password=make_password(form.cleaned_data['password'], '100000'),
+                        event=event,
+                    )
+                    inviter.save()
+
+                    return HttpResponseRedirect(reverse('events:detail', args=[token]))
+            else:
+                form = InvitForm()
+            return render(request, 'events/create_invit.html', locals())
+        
+        #demande si création
+        return render(request, 'events/inscription.html', locals())

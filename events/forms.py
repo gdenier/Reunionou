@@ -2,7 +2,7 @@ from django.forms import ModelForm, Textarea
 from django.contrib.admin.widgets import AdminDateWidget
 from django.utils.translation import gettext_lazy as _
 
-from .models import Event
+from .models import Event, Inviter
 
 class NewForm(ModelForm):
 
@@ -21,3 +21,7 @@ class NewForm(ModelForm):
             }
         }
 
+class InvitForm(ModelForm):
+    class Meta:
+        model = Inviter
+        fields = ['nom', 'prenom', 'age', 'email', 'password']
