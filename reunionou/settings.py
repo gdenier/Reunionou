@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'index.apps.IndexConfig',
     'members.apps.MembersConfig',
     'events.apps.EventsConfig',
     'django.contrib.admin',
@@ -133,3 +134,5 @@ STATICFILES_DIRS = (
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR + '/media/'
+
+LOGIN_URL = '/accounts/login/'

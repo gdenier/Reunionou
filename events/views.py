@@ -3,10 +3,12 @@ import uuid
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.urls import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.contenttypes.models import ContentType
 
 from .forms import NewForm, InvitForm
 from members.forms import SignupForm
@@ -14,42 +16,45 @@ from .models import Event, Inviter
 
 # Create your views here.
 
-def New_view(request, user_id):
-    
-    if User.objects.filter(id=request.session.get('_auth_user_id')).exists():
-        
-        error = False
+#-- créer une permission pour chaque event pour qu'un groupe puisse le modifier (auteur + personel autorise)
+@login_required
+def New_view(request):
+    error = False
 
-        if request.method == 'POST':
-            form = NewForm(request.POST)
-            if form.is_valid():
-                token_tmp = str(uuid.uuid4()).replace("-", "")
-                event = Event(
-                    titre=form.cleaned_data['titre'],
-                    description=form.cleaned_data['description'],
-                    date=form.cleaned_data['date'],
-                    token=token_tmp,
-                    auteur_id=user_id,
-                    public=0,
-                    adresse=form.cleaned_data['adresse']
-                )
-                event.save()
-                return HttpResponseRedirect(reverse('members:home'))
+    if request.method == 'POST':
+        form = NewForm(request.POST)
+        if form.is_valid():
+            token_tmp = str(uuid.uuid4()).replace("-", "")
+            event = Event(
+                titre=form.cleaned_data['titre'],
+                description=form.cleaned_data['description'],
+                date=form.cleaned_data['date'],
+                token=token_tmp,
+                auteur_id=request.user.id,
+                public=0,
+                adresse=form.cleaned_data['adresse']
+            )
+            event.save()
+            content_type = ContentType.objects.get(app_label='events', model='Event')
+            permission = Permission.objects.create(
+                codename='change_event_{}'.format(event.token),
+                name='changer l\'event "{}"'.format(event.token),
+                content_type=content_type,
+            )
+            request.user.user_permissions.add(permission)
+            return HttpResponseRedirect(reverse('members:home'))
 
-        else:
-            form = NewForm()
-        
-        return render(request, 'events/new.html', locals())
-    
     else:
-        return HttpResponseForbidden()
+        form = NewForm()
+    
+    return render(request, 'events/new.html', locals())
 
 def Detail_view(request, token):
 
     event = get_object_or_404(Event, token=token)
     inscrits = event.inviter_set.all()
 
-    if User.objects.filter(id=request.session.get('_auth_user_id')).exists():
+    if request.user.is_authenticated:
         
         if event.auteur_id == int(request.session.get('_auth_user_id')):
             return render(request, 'events/detail_auteur.html', locals())
@@ -60,10 +65,10 @@ def Detail_view(request, token):
     else:
         return render(request, 'events/detail_public.html', locals())    
 
-def Change_view(request, event_id):
-    if User.objects.filter(id=request.session.get('_auth_user_id')).exists():
-        
-        event = get_object_or_404(Event, id=event_id, auteur_id=request.session.get('_auth_user_id'))
+@login_required
+def Change_view(request, token):
+    if request.user.has_perm("events.change_event_{}".format(token)):
+        event = get_object_or_404(Event, token=token, auteur_id=request.user.id)
 
         error = False
 
@@ -89,22 +94,18 @@ def Change_view(request, event_id):
             })
         
         return render(request, 'events/change.html', locals())
-
     else:
         return HttpResponseForbidden()
 
+@login_required
 def List_view(request):
-    if User.objects.filter(id=request.session.get('_auth_user_id')).exists():
-        
-        events = Event.objects.filter(public=1)
-        return render(request, 'events/list.html', locals())
+    events = Event.objects.filter(public=1)
+    return render(request, 'events/list.html', locals())
 
-    else:
-        return HttpResponseForbidden()
 
 def Inscription_view(request, token, args='default'):
     event = Event.objects.get(token=token)
-    if User.objects.filter(id=request.session.get('_auth_user_id')).exists():
+    if request.user.is_authenticated:
         
         #inscription avec info perso du compte
         if args == 'accept':
