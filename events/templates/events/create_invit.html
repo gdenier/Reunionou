@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %} {{ block.super }} - Event Public {% endblock %}
+
+{% block content %}
+    
+    <form method="POST" action="{% url 'events:inscription' event.token 'invit' %}">
+        {% csrf_token %}
+        <label>Nom
+            {{ form.nom }}
+        </label>
+        <label>Prenom
+            {{ form.prenom }}
+        </label>
+        <label>Age
+            {{ form.age }}
+        </label>
+        <label>Email
+            {{ form.email }}
+        </label>
+        <label>Password
+            {{ form.password }}
+        </label>
+        <input type="submit" value="s'inscrire"/>
+    </form>
+
+{% endblock content %}

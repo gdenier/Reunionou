@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'index.apps.IndexConfig',
     'members.apps.MembersConfig',
     'events.apps.EventsConfig',
     'django.contrib.admin',
@@ -140,3 +141,5 @@ MESSAGE_TAGS = {
     messages.SUCCESS: "notification is-success",
     messages.ERROR: "notification is-danger"
 }
+
+LOGIN_URL = '/accounts/login/'

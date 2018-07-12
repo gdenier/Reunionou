@@ -1,16 +1,19 @@
 {% extends "base.html" %}
 
 
-{% block title %} {{ block.super }} - New Event {% endblock %}
+{% block title %} {{ block.super }} - Change Event {% endblock %}
 
 {% block content %}
+
+{{ actual_id }}
+{{ aut_id }}
     <section id="new_event">
         <div class="container">
             <div class="box">
                 <div class="panel">
-                    <h1>Nouvel évènement</h1>
+                    <h1>Modifier l'Evenement</h1>
                     <hr>
-                    <form method="POST" action="{% url 'events:new' %}">
+                    <form method="POST" action="{% url 'events:change' event.id %}">
                         {% csrf_token %}
                         <div class="form-group">
                             <div class="input-group">
@@ -44,7 +47,7 @@
                                 {{ form.adresse }}
                             </div>
 
-                            <input type="submit" value="créer" class="btn btn-primary">
+                            <input type="submit" value="modifier" class="btn btn-primary">
                         </div>
                     </form>
                 </div>

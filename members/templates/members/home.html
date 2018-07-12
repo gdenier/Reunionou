@@ -24,10 +24,10 @@
 					<hr>
 					<div class="list-group">
 						{% for event in events %}
-							<a href="{% url 'members:home' %}" class="list-group-item list-group-item-action list-group-item-primary">
+							<a href="{% url 'events:detail' event.token %}" class="list-group-item list-group-item-action list-group-item-primary">
 								{{ event.titre }}
 								<span class="pull-right text-muted">
-										voir le detail..
+									voir le detail..
 								</span>
 							</a>
 						{% endfor %}
@@ -38,7 +38,7 @@
 					</div>
 				</div>
 				
-				<a href="{% url 'events:new' user.id  %}" class="btn btn-primary">Créer un événement</a>
+				<a href="{% url 'events:new' %}" class="btn btn-primary">Créer un événement</a>
 
 			</div>
 		</div>

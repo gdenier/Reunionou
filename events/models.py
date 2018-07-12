@@ -13,6 +13,16 @@ class Event(models.Model):
     token = models.CharField(max_length=256)
     auteur = models.ForeignKey(User, on_delete=models.CASCADE)
     adresse = models.CharField(max_length=256)
+    public = models.BooleanField()
 
     def __str__(self):
         return self.titre
+
+class Inviter(models.Model):
+    nom = models.CharField(max_length=80, null=True)
+    prenom = models.CharField(max_length=80, null=True)
+    age = models.PositiveSmallIntegerField(null=True)
+    email = models.CharField(max_length=80, null=True)
+    password = models.CharField(max_length=80, null=True)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    user_id = models.PositiveIntegerField(null=True)
