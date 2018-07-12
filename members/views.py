@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.contrib import messages
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
@@ -21,6 +23,7 @@ def login_view(request):
                 return HttpResponseRedirect(reverse('members:home'))
             else:
                 error = True
+                messages.error(request, "Nom d'utilisateur ou mot de passe incorrect")
     else:
         form = SigninForm()
     
@@ -36,7 +39,8 @@ def home_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse('members:signin'))
+    messages.success(request, "Vous avez été déconnecté avec succès")
+    return HttpResponseRedirect(reverse('members:login'))
 
 def register_view(request):
     error = False
@@ -45,12 +49,15 @@ def register_view(request):
         if form.is_valid():
             if form.cleaned_data['password'] == form.cleaned_data['password_conf']:
                 user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password'])
-                login(request, user)
-                return HttpResponseRedirect(reverse('members:home'))
+                # login(request, user)
+                messages.success(request, "Votre compte a bien été crée")
+                return HttpResponseRedirect(reverse('members:login'))
             else:
                 error = True
+                messages.error(request, "Votre compte n'a pas pu être crée")
         else:
             error = True
+            messages.error(request, "Votre compte n'a pas pu être crée")
     else:
         form = SignupForm()
     

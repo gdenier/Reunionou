@@ -3,47 +3,45 @@
 {% block title %} {{ block.super }} - Home {% endblock %}
 
 {% block content %}
-    
-    <section id="profile">
-        <div class="container">
-            <div class="box">
-                <div class="panel">
-                    <div class="item">
-                        <h3>
-                            Mes informations
-                            <span class="pull-right">
-                                <a href="{% url 'members:home' %}" class="btn btn-primary">Modifier le profil</a>
-                            </span>
-                        </h3>
-                        <hr>
-                        <h4>Identifiant: {{ user.username }}</h4>
-                        <h4>email: {{ user.email }}</h4>
-                    </div>
+<section id="profile">
+	<div class="container">
+		<div class="box">
+			<div class="panel">
+				<div class="item">
+					<h3>
+						Mes informations
+						<span class="pull-right">
+								<a href="{% url 'members:home' %}" class="btn btn-primary">Modifier le profil</a>
+						</span>
+					</h3>
+					<hr>
+					<h4>Identifiant: {{ user.username }}</h4>
+					<h4>email: {{ user.email }}</h4>
+				</div>
 
-                    <div class="item">
-                        <h3>Mes Evénements</h3>
-                        <hr>
-                        <div class="list-group">
-                            {% for event in events %}
-                                <a href="{% url 'members:home' %}" class="list-group-item list-group-item-action list-group-item-primary">
-                                    {{ event.titre }}
-                                    <span class="pull-right text-muted">
-                                        voir le detail..
-                                    </span>
-                                </a>
-                            {% endfor %}
+				<div class="item">
+					<h3>Mes Evénements</h3>
+					<hr>
+					<div class="list-group">
+						{% for event in events %}
+							<a href="{% url 'members:home' %}" class="list-group-item list-group-item-action list-group-item-primary">
+								{{ event.titre }}
+								<span class="pull-right text-muted">
+										voir le detail..
+								</span>
+							</a>
+						{% endfor %}
 
-                            {% if not event_exist %}
-                                <p class="test-muted text-center">Aucun événement à afficher</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <a href="{% url 'events:new' user.id  %}" class="btn btn-primary">Créer un événement</a>
+						{% if not event_exist %}
+							<p class="test-muted text-center">Aucun événement à afficher</p>
+						{% endif %}
+					</div>
+				</div>
+				
+				<a href="{% url 'events:new' user.id  %}" class="btn btn-primary">Créer un événement</a>
 
-                </div>
-            </div>
-        </div>
-    </section>
-
+			</div>
+		</div>
+	</div>
+</section>
 {% endblock content %}
