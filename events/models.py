@@ -26,3 +26,12 @@ class Guest(models.Model):
     password = models.CharField(max_length=80, null=True)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+class Comment(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateTimeField('date published', auto_now_add=True)
+    core = models.CharField(max_length=512)
+    like = models.PositiveSmallIntegerField(default=0)
+    dislike = models.PositiveSmallIntegerField(default=0)
+    edited = models.DateTimeField('date edited', null=True)
+    response_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True)

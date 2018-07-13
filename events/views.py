@@ -1,4 +1,5 @@
 import uuid
+import datetime
 
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
@@ -170,3 +171,15 @@ def Register_view(request, token, args='default'):
         
         #demande si création
         return render(request, 'events/register.html', locals())
+
+@login_required
+def Comment_view(request, token):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = Comment(
+                author=request.user,
+                core=form.cleaned_data['core'],
+            )
+    else:
+        return HttpResponseRedirect(reverse('events:detail', args=[token]))
