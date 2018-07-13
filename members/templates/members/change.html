@@ -1,0 +1,28 @@
+{% extends "base_with_hero.html" %}
+
+{% block title %} {{ block.super }} - Modifier le Profil {% endblock %}
+
+{% block content %}
+
+<section id="change_profil">
+    <div class="container">
+        <div class="box">
+            <div class="panel">
+                <h1>Modifier le profil</h1>
+                <hr>
+                <form method="POST" action="{% url 'members:change' %}">
+                    {% csrf_token %}
+                    {{ form.username }}
+                    {{ form.last_name }}
+                    {{ form.first_name }}
+                    {{ form.password }}
+                    {{ form.password_conf }}
+                    {{ form.email }}
+                    <input type="submit" value="Modifier">
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

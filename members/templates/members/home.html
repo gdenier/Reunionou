@@ -11,12 +11,12 @@
 					<h3>
 						Mes informations
 						<span class="pull-right">
-								<a href="{% url 'members:home' %}" class="btn btn-primary">Modifier le profil</a>
+								<a href="{% url 'members:change' %}" class="btn btn-primary">Modifier le profil</a>
 						</span>
 					</h3>
 					<hr>
-					<h4>Identifiant: {{ user.username }}</h4>
-					<h4>email: {{ user.email }}</h4>
+					<h4>Identifiant: {{ request.user.username }}</h4>
+					<h4>email: {{ request.user.email }}</h4>
 				</div>
 
 				<div class="item">
@@ -25,7 +25,7 @@
 					<div class="list-group">
 						{% for event in events %}
 							<a href="{% url 'events:detail' event.token %}" class="list-group-item list-group-item-action list-group-item-primary">
-								{{ event.titre }}
+								{{ event.title }}
 								<span class="pull-right text-muted">
 									voir le detail..
 								</span>

@@ -8,13 +8,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
 from events.models import Event
+from .forms import ChangeForm
 
 # Create your views here.
 
 @login_required
 def home_view(request):
-    user = User.objects.get(id=request.session.get('_auth_user_id'))
-    events = user.event_set.all()
+    events = request.user.event_set.all()
 
     event_exist = True if len(events) >= 0 else False
 
@@ -26,3 +26,31 @@ def logout_view(request):
     messages.success(request, "Vous avez été déconnecté avec succès")
     return HttpResponseRedirect(reverse('index:login'))
 
+@login_required
+def change_view(request):
+    if request.method == 'POST':
+        form = ChangeForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data['password'] == form.cleaned_data['password_conf']:
+                request.user.username = form.cleaned_data['username']
+                if form.cleaned_data['password'] != '******':
+                    request.user.password = form.cleaned_data['password']
+                request.user.last_name = form.cleaned_data['last_name']
+                request.user.first_name = form.cleaned_data['first_name']
+                request.user.email = form.cleaned_data['email']
+
+                request.user.save()
+
+                messages.success(request, "Vos informations ont bien été mise à jour")
+                return HttpResponseRedirect(reverse('members:home'))
+    else:
+        form = ChangeForm(initial={
+            'username': request.user.username,
+            'password': "******",
+            'password_conf': "******",
+            'last_name': request.user.last_name,
+            'first_name': request.user.first_name,
+            'email': request.user.email,
+        })
+
+    return render(request, 'members/change.html', locals())

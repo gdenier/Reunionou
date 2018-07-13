@@ -9,6 +9,6 @@ urlpatterns = [
     path('<token>/modifier/', views.Change_view, name='change'),
     path('liste/', views.List_view, name='list'),
     path('<token>/', views.Detail_view, name='detail'),
-    path('inscription/<token>', views.Inscription_view, name='inscription'),
-    path('inscription/<token>/<args>', views.Inscription_view, name='inscription'),
+    path('inscription/<token>', views.Register_view, name='register'),
+    path('inscription/<token>/<args>', views.Register_view, name='register'),
 ]

@@ -7,4 +7,5 @@ app_name = 'members'
 urlpatterns = [
     path('', views.home_view, name='home'),
     path('deconnexion/', views.logout_view, name='logout'),
+    path('modifier/', views.change_view, name="change"),
 ]
