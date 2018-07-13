@@ -34,7 +34,7 @@ def login_view(request):
         else:
             form = SigninForm()
         
-    return render(request, 'members/login.html', locals())
+    return render(request, 'index/login.html', locals())
 
 def register_view(request):
     if request.user.is_authenticated:
@@ -48,7 +48,7 @@ def register_view(request):
                     user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password'])
                     # login(request, user)
                     messages.success(request, "Votre compte a bien été crée")
-                    return HttpResponseRedirect(reverse('members:login'))
+                    return HttpResponseRedirect(reverse('index:login'))
                 else:
                     error = True
             else:
@@ -57,4 +57,6 @@ def register_view(request):
         else:
             form = SignupForm()
     
-    return render(request, 'members/register.html', locals())
+    return render(request, 'index/register.html', locals())
+
+    
