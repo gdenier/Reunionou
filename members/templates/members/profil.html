@@ -1,0 +1,31 @@
+{% extends "members/account.html" %}
+
+{% block title %} {{ block.super }} - Profil {% endblock title %}
+{% block page_name %}profil{% endblock %}
+
+{% block account_content %}
+<div class="columns is-variable is-8">
+  <div class="column is-4">
+    <figure class="image is-square">
+      <img src="https://bulma.io/images/placeholders/480x480.png" alt="">
+    </figure>
+  </div>
+  <div class="column">
+    <div class="is-clearfix">
+      <div class="is-pulled-left">
+        <h1 class="title has-text-grey-dark">
+          {{ user.first_name }} {{ user.last_name }} 
+          <p class="is-size-6 has-text-grey-light is-pulled-right">
+            <span class="icon is-large">
+              <i class="fas fa-map-marker-alt"></i>
+            </span>
+            {{ user.ville }}
+          </p>
+        </h1>
+        <p class="subtitle has-text-grey-light">@{{ user.username }}</p>
+      </div>
+      <a href=""><span class="icon is-pulled-right"><i class="fas fa-cogs"></i></span></a>
+    </div>
+  </div>
+</div>
+{% endblock account_content %}

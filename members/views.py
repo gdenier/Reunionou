@@ -70,3 +70,7 @@ def register_view(request):
             form = SignupForm()
     
     return render(request, 'members/register.html', locals())
+
+@login_required
+def profil_view(request):
+    return render(request, 'members/profil.html', locals())
