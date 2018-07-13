@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.db.utils import IntegrityError
 
 from .forms import SigninForm, SignupForm
 
@@ -45,14 +46,20 @@ def register_view(request):
             form = SignupForm(request.POST)
             if form.is_valid():
                 if form.cleaned_data['password'] == form.cleaned_data['password_conf']:
-                    user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password'])
-                    # login(request, user)
-                    messages.success(request, "Votre compte a bien été crée")
-                    return HttpResponseRedirect(reverse('index:login'))
+                    try:
+                        test = User.objects.get(email=form.cleaned_data['email'])
+                        messages.error(request, "Email déjà pris")
+                    except User.DoesNotExist:
+                        user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password'])
+                        # login(request, user)
+                        messages.success(request, "Votre compte a bien été crée")
+                        return HttpResponseRedirect(reverse('index:login'))
+                    except IntegrityError:
+                        messages.error(request, "Identifiant déjà pris")
+
                 else:
-                    error = True
+                    messages.error(request, "Mot de passe ne correpondent pas")
             else:
-                error = True
                 messages.error(request, "Votre compte n'a pas pu être crée")
         else:
             form = SignupForm()
