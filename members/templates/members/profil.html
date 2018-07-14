@@ -14,7 +14,11 @@
     <div class="is-clearfix">
       <div class="is-pulled-left">
         <h1 class="title has-text-grey-dark">
-          {{ user.first_name }} {{ user.last_name }} 
+          {% if user.first_name and user.last_name %}
+            {{ user.first_name }} {{ user.last_name }}
+          {% else %}
+            {{ user.username }}
+          {% endif %}
           <p class="is-size-6 has-text-grey-light is-pulled-right">
             <span class="icon is-large">
               <i class="fas fa-map-marker-alt"></i>
