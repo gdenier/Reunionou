@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load events_extras %}
 
 {% block title %} {{ block.super }} - Event Auteur {% endblock %}
 
@@ -40,7 +41,12 @@
                 <p>Message Supprimé</p>
             {% endif %}
         {% endif %}
-        <a href="{% url 'events:delete_com' event.token comment.id %}">Supprimer</a>        
+        {% with 'events.delete_comment_'|addstr:comment.id as perm %}
+            {% if perm in perms and comment.deleted != True %}
+                <a href="{% url 'events:delete_com' event.token comment.id %}">Supprimer</a> 
+            {% endif %}
+        {% endwith %}
+        <a href="{% url 'events:like_com' event.token comment.id %} ">+{{ comment.like }}</a> | <a href="{% url 'events:dislike_com' event.token comment.id %}">-{{ comment.dislike }}</a>        
     {% endfor %}
     <div>
         <form method="POST" action="{% url 'events:comment' event.token %}">

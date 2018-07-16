@@ -246,3 +246,17 @@ def Delete_com_view(request, token, comment_id):
         return HttpResponseRedirect(reverse('events:detail', args=[token]))
     else:
         return HttpResponseForbidden()
+
+@login_required
+def Like_com_view(request, token, comment_id):
+    comment = Comment.objects.get(pk=comment_id)
+    comment.like += 1
+    comment.save()
+    return HttpResponseRedirect(reverse('events:detail', args=[token]))
+
+@login_required
+def Dislike_com_view(request, token, comment_id):
+    comment = Comment.objects.get(pk=comment_id)
+    comment.dislike += 1
+    comment.save()
+    return HttpResponseRedirect(reverse('events:detail', args=[token]))

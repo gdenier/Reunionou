@@ -14,4 +14,6 @@ urlpatterns = [
     path('<token>/commentaire/', views.Comment_view, name="comment"),
     path('<token>/commentaire/edit/<int:comment_id>', views.Comment_Edit_view, name="edit"),
     path('<token>/commentaire/delete/<int:comment_id>', views.Delete_com_view, name="delete_com"),
+    path('<token>/commentaire/like/<int:comment_id>', views.Like_com_view, name="like_com"),
+    path('<token>/commentaire/dislike/<int:comment_id>', views.Dislike_com_view, name="dislike_com"),
 ]
