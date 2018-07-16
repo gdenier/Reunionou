@@ -44,7 +44,6 @@ def change_view(request):
                 messages.success(request, "Vos informations ont bien été mise à jour")
                 return HttpResponseRedirect(reverse('members:home'))
     else:
-<<<<<<< HEAD
         form = ChangeForm(initial={
             'username': request.user.username,
             'password': "******",
@@ -55,7 +54,6 @@ def change_view(request):
         })
 
     return render(request, 'members/change.html', locals())
-=======
         error = False
         if request.method == 'POST':
             form = SignupForm(request.POST)
@@ -78,4 +76,3 @@ def change_view(request):
 @login_required
 def profil_view(request):
     return render(request, 'members/profil.html', locals())
->>>>>>> 3c50f182e5f071c4735222de67880d99ecc04d54
