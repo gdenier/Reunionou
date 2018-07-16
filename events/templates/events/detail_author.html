@@ -1,13 +1,61 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block title %} {{ block.super }} - Event Auteur {% endblock %}
 
 {% block content %}
     {{ event.title }}
-    <!-- aucune idée de la mise en page vus que tu a tout changé mais toutes les données sont dans event -->
+    <input type="hidden" id="event_token" name="variable" value="{{ event.token }}">
+    <!-- aucune idée de la mise en page vus que tu a tout changé mais toutes les données sont la -->
     <a href="{% url 'events:change' event.token %}">Modifier</a>
 
+    <h4>Inscrit</h4>
     {% for inscrit in inscrits %}
         <p>{{ inscrit.last_name }}</p>
     {% endfor %}
+
+    <h4>Commentaire</h4>
+    {% for comment in comments %}
+        {% if comment.response_to == None %}
+            <p>posté le {{ comment.date }}</p>
+            {% if comment.delete != True %}
+                <p id="{{ comment.id }}">{{ comment.core }}</p>
+                {% if comment.author == request.user %}
+                    <button class="edite" value="{{ comment.id }}">Edite</button>
+                {% endif %}
+                <button class="answer" value="{{ comment.id }}">Répondre</button>
+            {% else %}
+                <p>Message Supprimé</p>
+            {% endif %}
+        {% else %}
+            <p>posté le {{ comment.date }}</p>
+            {% if comment.delete != True %}
+                <p id="{{ comment.id }}">{{ comment.core }}</p>
+                <p>Response to: {{ comment.response_to }}</p>
+                {% if comment.author == request.user %}
+                    <button class="edite" value="{{ comment.id }}">Edite</button>
+                {% endif %}
+            {% else %}
+                <p>Message Supprimé</p>
+            {% endif %}
+        {% endif %}
+        <a href="{% url 'events:delete_com' event.token comment.id %}">Supprimer</a>        
+    {% endfor %}
+    <div>
+        <form method="POST" action="{% url 'events:comment' event.token %}">
+            {% csrf_token %}
+            <label>Message
+            {{ form.core }}
+            </label>
+            <input type="submit" value="envoyer"/>
+        </form>
+    </div>
 {% endblock content %}
+
+{% block script %}
+    <script>
+        var SCRF_TOKEN = '{{ csrf_token }}';
+    </script>
+    <script type="text/javascript" src="{% static 'js/comment_event.js' %}"></script>
+{% endblock script %}

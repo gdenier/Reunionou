@@ -12,4 +12,6 @@ urlpatterns = [
     path('inscription/<token>/', views.Register_view, name='register'),
     path('inscription/<token>/<args>/', views.Register_view, name='register'),
     path('<token>/commentaire/', views.Comment_view, name="comment"),
+    path('<token>/commentaire/edit/<int:comment_id>', views.Comment_Edit_view, name="edit"),
+    path('<token>/commentaire/delete/<int:comment_id>', views.Delete_com_view, name="delete_com"),
 ]

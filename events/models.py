@@ -34,4 +34,6 @@ class Comment(models.Model):
     like = models.PositiveSmallIntegerField(default=0)
     dislike = models.PositiveSmallIntegerField(default=0)
     edited = models.DateTimeField('date edited', null=True)
+    deleted = models.BooleanField(default=False)
     response_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)

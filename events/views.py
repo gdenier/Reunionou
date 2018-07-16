@@ -1,5 +1,5 @@
 import uuid
-import datetime
+from datetime import datetime
 
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
@@ -11,9 +11,9 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 
-from .forms import NewForm, InvitForm
+from .forms import NewForm, InvitForm, CommentForm
 from index.forms import SignupForm
-from .models import Event, Guest
+from .models import Event, Guest, Comment
 
 # Create your views here.
 
@@ -54,6 +54,9 @@ def Detail_view(request, token):
 
     event = get_object_or_404(Event, token=token)
     inscrits = event.guest_set.all()
+    comments = event.comment_set.all().order_by('date')
+    comments = trie_comment(comments)
+    form = CommentForm()
 
     if request.user.is_authenticated:
         
@@ -112,11 +115,11 @@ def Register_view(request, token, args='default'):
         if args == 'accept':
             
             guest = Guest(
-                nom=request.user.last_name,
-                prenom=request.user.first_name,
+                last_name=request.user.last_name,
+                first_name=request.user.first_name,
                 email=request.user.email,
                 event=event,
-                user_id=request.user,
+                user=request.user,
             )
             guest.save()
 
@@ -135,8 +138,8 @@ def Register_view(request, token, args='default'):
                         login(request, user)
 
                         guest = Guest(
-                            nom=user.first_name,
-                            prenom=user.first_name,
+                            last_name=user.first_name,
+                            first_name=user.first_name,
                             email=user.email,
                             event=event,
                             user=request.user,
@@ -155,8 +158,8 @@ def Register_view(request, token, args='default'):
                 if form.is_valid():
                     #if form.cleaned_data['password'] == form.cleaned_data['password_conf']:
                     guest = Guest(
-                        nom=form.cleaned_data['nom'],
-                        prenom=form.cleaned_data['prenom'],
+                        last_name=form.cleaned_data['last_name'],
+                        first_name=form.cleaned_data['first_name'],
                         age=form.cleaned_data['age'],
                         email=form.cleaned_data['email'],
                         password=make_password(form.cleaned_data['password'], '100000'),
@@ -175,11 +178,71 @@ def Register_view(request, token, args='default'):
 @login_required
 def Comment_view(request, token):
     if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = Comment(
-                author=request.user,
-                core=form.cleaned_data['core'],
-            )
-    else:
+        comment = Comment()
+        if request.POST.get('father'):
+            comment.author=request.user,
+            comment.core=request.POST.get('core'),
+            comment.event=Event.objects.get(token=token),
+            comment.response_to=Comment.objects.get(id=request.POST.get('father'))
+            comment.save()
+        else:
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                comment = Comment(
+                    author=request.user,
+                    core=form.cleaned_data['core'],
+                    event=Event.objects.get(token=token)
+                )
+                comment.save()
+            else:
+                return HttpResponseRedirect(reverse('events:detail', args=[token]))
+
+        content_type = ContentType.objects.get(app_label='events', model='Comment')
+        permission = Permission.objects.create(
+            codename='edit_comment_{}'.format(comment.id),
+            name='Editer le commentaire "{}"'.format(comment.id),
+            content_type=content_type,
+        )
+        request.user.user_permissions.add(permission)
+
+        permission = Permission.objects.create(
+            codename='delete_comment_{}'.format(comment.id),
+            name='Supprimer le commentaire "{}'.format(comment.id),
+            content_type=content_type,
+        )
+        Event.objects.get(token=token).author.user_permissions.add(permission)
+        request.user.user_permissions.add(permission)
+       
+    return HttpResponseRedirect(reverse('events:detail', args=[token]))
+
+def trie_comment(comments, trie=None):
+    comments_bis = []
+    for comment in comments:
+        if comment.response_to == None:
+            comments_bis.append(comment)
+            for comment_2 in comments:
+                if comment_2.response_to == comment:
+                    comments_bis.append(comment_2)
+    return comments_bis
+
+def Comment_Edit_view(request, token, comment_id):
+    if request.user.has_perm("events.edit_comment_{}".format(comment_id)):
+        if request.method == 'POST':
+            com = Comment.objects.get(id=comment_id)
+            com.core = request.POST['core']
+            com.edited = str(datetime.now())
+            com.save()
+            return HttpResponseRedirect(reverse('events:detail', args=[token]))
         return HttpResponseRedirect(reverse('events:detail', args=[token]))
+    else:
+        return HttpResponseForbidden()
+
+@login_required
+def Delete_com_view(request, token, comment_id):
+    if request.user.has_perm("events.delete_comment_{}".format(comment_id)):
+        comment = Comment.objects.get(pk=comment_id)
+        comment.deleted = True
+        comment.save()
+        return HttpResponseRedirect(reverse('events:detail', args=[token]))
+    else:
+        return HttpResponseForbidden()
