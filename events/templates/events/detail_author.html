@@ -17,32 +17,30 @@
 
     <h4>Commentaire</h4>
     {% for comment in comments %}
-        <div style="border: 1px solid red">
-            {% if comment.response_to == None %}
-                <p>posté le {{ comment.date }}</p>
-                {% if comment.delete != True %}
-                    <p id="{{ comment.id }}">{{ comment.core }}</p>
-                    {% if comment.author == request.user %}
-                        <button class="edite" value="{{ comment.id }}">Edite</button>
-                    {% endif %}
-                    <button class="answer" value="{{ comment.id }}">Répondre</button>
-                {% else %}
-                    <p>Message Supprimé</p>
+        {% if comment.response_to == None %}
+            <p>posté le {{ comment.date }}</p>
+            {% if comment.delete != True %}
+                <p id="{{ comment.id }}">{{ comment.core }}</p>
+                {% if comment.author == request.user %}
+                    <button class="edite" value="{{ comment.id }}">Edite</button>
+                {% endif %}
+                <button class="answer" value="{{ comment.id }}">Répondre</button>
+            {% else %}
+                <p>Message Supprimé</p>
+            {% endif %}
+        {% else %}
+            <p>posté le {{ comment.date }}</p>
+            {% if comment.delete != True %}
+                <p id="{{ comment.id }}">{{ comment.core }}</p>
+                <p>Response to: {{ comment.response_to }}</p>
+                {% if comment.author == request.user %}
+                    <button class="edite" value="{{ comment.id }}">Edite</button>
                 {% endif %}
             {% else %}
-                <p>posté le {{ comment.date }}</p>
-                {% if comment.delete != True %}
-                    <p id="{{ comment.id }}">{{ comment.core }}</p>
-                    <p>Response to: {{ comment.response_to }}</p>
-                    {% if comment.author == request.user %}
-                        <button class="edite" value="{{ comment.id }}">Edite</button>
-                    {% endif %}
-                {% else %}
-                    <p>Message Supprimé</p>
-                {% endif %}
+                <p>Message Supprimé</p>
             {% endif %}
-            <a href="{% url 'events:delete_com' event.token comment.id %}">Supprimer</a>        
-        </div>
+        {% endif %}
+        <a href="{% url 'events:delete_com' event.token comment.id %}">Supprimer</a>        
     {% endfor %}
     <div>
         <form method="POST" action="{% url 'events:comment' event.token %}">

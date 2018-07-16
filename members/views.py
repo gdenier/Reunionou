@@ -54,25 +54,3 @@ def change_view(request):
         })
 
     return render(request, 'members/change.html', locals())
-        error = False
-        if request.method == 'POST':
-            form = SignupForm(request.POST)
-            if form.is_valid():
-                if form.cleaned_data['password'] == form.cleaned_data['password_conf']:
-                    user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password'])
-                    # login(request, user)
-                    messages.success(request, "Votre compte a bien été crée")
-                    return HttpResponseRedirect(reverse('members:login'))
-                else:
-                    error = True
-            else:
-                error = True
-                messages.error(request, "Votre compte n'a pas pu être crée")
-        else:
-            form = SignupForm()
-    
-    return render(request, 'members/register.html', locals())
-
-@login_required
-def profil_view(request):
-    return render(request, 'members/profil.html', locals())
