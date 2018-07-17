@@ -79,7 +79,7 @@ def Detail_view(request, token):
 @login_required
 def Change_view(request, token):
     if request.user.has_perm("events.change_event_{}".format(token)):
-        event = get_object_or_404(Event, token=token, auteur_id=request.user.id)
+        event = get_object_or_404(Event, token=token, author=request.user)
 
         error = False
 
@@ -90,7 +90,13 @@ def Change_view(request, token):
                 event.title=form.cleaned_data['title']
                 event.description=form.cleaned_data['description']
                 event.date=form.cleaned_data['date']
-                event.addresse=form.cleaned_data['addresse']
+                event.addresse="{} {} {}, {} {}".format(
+                    form.cleaned_data['street_number'],
+                    str(form.cleaned_data['type_street'])[2:-2],
+                    form.cleaned_data['street'],
+                    form.cleaned_data['postcode'],
+                    form.cleaned_data['country'],
+                )
 
                 event.save()
 
@@ -101,7 +107,11 @@ def Change_view(request, token):
                 'title': event.title,
                 'description': event.description,
                 'date': event.date,
-                'addresse': event.addresse,
+                'street_number': int(event.addresse.split(',')[0].split(' ')[0]),
+                'type_street': event.addresse.split(',')[0].split(' ')[1],
+                'street': event.addresse.split(',')[0][(event.addresse.split(',')[0].find(event.addresse.split(',')[0].split(' ')[1]))+len(event.addresse.split(',')[0].split(' ')[1])+1:], # selection de la ligne a partir de <type de rue> jusqu'a la virgule
+                'postcode': event.addresse.split(', ')[1].split(' ')[0],
+                'country': event.addresse.split(', ')[1].split(' ')[1],
             })
         
         return render(request, 'events/change.html', locals())
