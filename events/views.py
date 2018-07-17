@@ -20,7 +20,6 @@ from .models import Event, Guest, Comment, Like_Dislike
 #-- créer une permission pour chaque event pour qu'un groupe puisse le modifier (auteur + personel autorise)
 @login_required
 def New_view(request):
-    error = False
 
     if request.method == 'POST':
         form = NewForm(request.POST)
@@ -33,7 +32,13 @@ def New_view(request):
                 token=token_tmp,
                 author=request.user,
                 public=0,
-                addresse=form.cleaned_data['addresse']
+                addresse="{} {} {}, {} {}".format(
+                    form.cleaned_data['street_number'],
+                    str(form.cleaned_data['type_street'])[2:-2],
+                    form.cleaned_data['street'],
+                    form.cleaned_data['postcode'],
+                    form.cleaned_data['country'],
+                ),
             )
             event.save()
             content_type = ContentType.objects.get(app_label='events', model='Event')
@@ -57,6 +62,8 @@ def Detail_view(request, token):
     comments = event.comment_set.all().order_by('date')
     comments = trie_comment(comments)
     form = CommentForm()
+
+    addresse = event.addresse.replace(' ', '%20')
 
     if request.user.is_authenticated:
         
