@@ -37,3 +37,12 @@ class Comment(models.Model):
     deleted = models.BooleanField(default=False)
     response_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+
+class Like_Dislike(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    com = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True)
+    value = models.BooleanField()
+
+    def __str__(self):
+        return self.value

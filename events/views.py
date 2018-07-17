@@ -249,10 +249,15 @@ def Delete_com_view(request, token, comment_id):
 
 @login_required
 def Like_com_view(request, token, comment_id):
-    comment = Comment.objects.get(pk=comment_id)
-    comment.like += 1
-    comment.save()
-    return HttpResponseRedirect(reverse('events:detail', args=[token]))
+    if Like_Dislike.objects.get(user=request.user, comment=Comment.objects.get(pk=comment_id)) == None:
+        comment = Comment.objects.get(pk=comment_id)
+        comment.like += 1
+        comment.save()
+
+        like = Like_Dislike(user=request.user, comment=Comment.objects.get(pk=comment_id), value=True)
+        like.save()
+
+        return HttpResponseRedirect(reverse('events:detail', args=[token]))
 
 @login_required
 def Dislike_com_view(request, token, comment_id):
