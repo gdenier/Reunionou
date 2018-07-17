@@ -12,7 +12,7 @@ class Event(models.Model):
     date = models.DateTimeField('date published')
     token = models.CharField(max_length=256)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    addresse = models.CharField(max_length=256)
+    address = models.CharField(max_length=256)
     public = models.BooleanField()
 
     def __str__(self):
