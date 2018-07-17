@@ -13,7 +13,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from .forms import NewForm, InvitForm, CommentForm
 from index.forms import SignupForm
-from .models import Event, Guest, Comment
+from .models import Event, Guest, Comment, Like_Dislike
 
 # Create your views here.
 
@@ -249,19 +249,48 @@ def Delete_com_view(request, token, comment_id):
 
 @login_required
 def Like_com_view(request, token, comment_id):
-    if Like_Dislike.objects.get(user=request.user, comment=Comment.objects.get(pk=comment_id)) == None:
+    try:
+        like = Like_Dislike.objects.get(user=request.user, com=Comment.objects.get(pk=comment_id))
+        if like.value == False:
+            comment = Comment.objects.get(pk=comment_id)
+            comment.like += 1
+            if comment.dislike > 0:
+                comment.dislike -= 1
+            comment.save()
+
+            like.value = True
+            like.save()
+    except Like_Dislike.DoesNotExist:
+        
         comment = Comment.objects.get(pk=comment_id)
         comment.like += 1
         comment.save()
 
-        like = Like_Dislike(user=request.user, comment=Comment.objects.get(pk=comment_id), value=True)
+        like = Like_Dislike(user=request.user, com=Comment.objects.get(pk=comment_id), value=True)
         like.save()
 
-        return HttpResponseRedirect(reverse('events:detail', args=[token]))
+    return HttpResponseRedirect(reverse('events:detail', args=[token]))
 
 @login_required
 def Dislike_com_view(request, token, comment_id):
-    comment = Comment.objects.get(pk=comment_id)
-    comment.dislike += 1
-    comment.save()
+    try:
+        dislike = Like_Dislike.objects.get(user=request.user, com=Comment.objects.get(pk=comment_id))
+        if dislike.value == True:
+            comment = Comment.objects.get(pk=comment_id)
+            if comment.like > 0:
+                comment.like -= 1
+            comment.dislike += 1
+            comment.save()
+
+            dislike.value = False
+            dislike.save()
+
+    except Like_Dislike.DoesNotExist:
+        comment = Comment.objects.get(pk=comment_id)
+        comment.dislike += 1
+        comment.save()
+
+        dislike = Like_Dislike(user=request.user, com=Comment.objects.get(pk=comment_id), value=False)
+        dislike.save()
+
     return HttpResponseRedirect(reverse('events:detail', args=[token]))
