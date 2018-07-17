@@ -142,4 +142,4 @@ MESSAGE_TAGS = {
     messages.ERROR: "notification is-danger"
 }
 
-LOGIN_URL = '/accounts/login/'
+LOGIN_URL = '/connexion/'

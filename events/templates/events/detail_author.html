@@ -3,15 +3,14 @@
 {% load static %}
 {% load events_extras %}
 
-{% block title %} {{ block.super }} - Event Public {% endblock %}
+{% block title %} {{ block.super }} - Event Auteur {% endblock %}
 
 {% block content %}
     {{ event.title }}
     <input type="hidden" id="event_token" name="variable" value="{{ event.token }}">
+    <!-- aucune idée de la mise en page vus que tu a tout changé mais toutes les données sont la -->
+    <a href="{% url 'events:change' event.token %}">Modifier</a>
 
-    <!-- aucune idée de la mise en page vus que tu a tout changé mais toutes les données sont dans event -->
-    
-    <a href="{% url 'events:register' event.token %}">S'inscrire</a>
     <h4>Inscrit</h4>
     {% for inscrit in inscrits %}
         <p>{{ inscrit.last_name }}</p>
@@ -21,7 +20,7 @@
     {% for comment in comments %}
         {% if comment.response_to == None %}
             <p>posté le {{ comment.date }}</p>
-            {% if comment.deleted != True %}
+            {% if comment.delete != True %}
                 <p id="{{ comment.id }}">{{ comment.core }}</p>
                 {% if comment.author == request.user %}
                     <button class="edite" value="{{ comment.id }}">Edite</button>
@@ -32,7 +31,7 @@
             {% endif %}
         {% else %}
             <p>posté le {{ comment.date }}</p>
-            {% if comment.deleted != True %}
+            {% if comment.delete != True %}
                 <p id="{{ comment.id }}">{{ comment.core }}</p>
                 <p>Response to: {{ comment.response_to }}</p>
                 {% if comment.author == request.user %}
@@ -47,7 +46,7 @@
                 <a href="{% url 'events:delete_com' event.token comment.id %}">Supprimer</a> 
             {% endif %}
         {% endwith %}
-        <a href="{% url 'events:like_com' event.token comment.id %} ">+{{ comment.like }}</a> | <a href="{% url 'events:dislike_com' event.token comment.id %}">-{{ comment.dislike }}</a>
+        <a href="{% url 'events:like_com' event.token comment.id %} ">+{{ comment.like }}</a> | <a href="{% url 'events:dislike_com' event.token comment.id %}">-{{ comment.dislike }}</a>        
     {% endfor %}
     <div>
         <form method="POST" action="{% url 'events:comment' event.token %}">

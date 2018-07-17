@@ -1,6 +1,6 @@
 {% extends "base_with_hero.html" %}
 
-{% block title %}{{ block.super }} - Connexion{% endblock %}
+{% block title %}{{ block.super }} - Login{% endblock %}
 {% block page_name %}login{% endblock %}
 
 {% block content %}
@@ -19,7 +19,7 @@
 
 			<div class="box">
 				<h1 class="title">Connexion</h1>
-				<form method="POST" action="{% url 'members:login' %}">
+				<form method="POST" action="{% url 'index:login' %}">
 					{% csrf_token %}
 					<div class="field">
 						<div class="control has-icons-left">
@@ -37,13 +37,13 @@
 							</span>
 						</div>
 					</div>
-					<a href="{#% url 'members:forgot_password' %#}">Mot de passe oublié?</a>
+					<a href="{#% url 'index:forgot_password' %#}">Mot de passe oublié?</a>
 					<div class="has-text-right">
 						<input type="submit" value="Connexion" class="button is-primary"/>
 					</div>
 				</form>
 			</div>
-			<p class="has-text-centered">Vous n'avez pas encore de compte? <a href="{% url 'members:register' %}">Inscrivez-vous</a></p>
+			<p class="has-text-centered">Vous n'avez pas encore de compte? <a href="{% url 'index:register' %}">Inscrivez-vous</a></p>
 		</div>
 		<div class="column">
 		</div>
