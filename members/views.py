@@ -23,6 +23,13 @@ def home_view(request):
 
     return render(request, 'members/home.html', locals())
 
+@login_required
+def profil_view(request):
+    """
+        The function to show the user's profil.
+    """
+    return render(request, 'members/profil.html', locals())
+
 @login_required(login_url='')
 def logout_view(request):
     """
