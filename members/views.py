@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
 from events.models import Event
-from .forms import ChangeForm
+from .forms import ChangeForm, SendMessageForm
 
 # Create your views here.
 
@@ -76,3 +76,26 @@ def change_view(request):
         })
 
     return render(request, 'members/change.html', locals())
+
+@login_required
+def message_view(request):
+    return render(request, 'members/message.html')
+
+@login_required
+def send_message(request):
+    if request.method == 'POST':
+        form = SendMessageForm(request.POST)
+        if form.is_valid():
+            targets = form.cleaned_data['target'].split(',')
+            message = Message(content=form.cleaned_data['content'])
+            message.save()
+            for target in targets:
+                message.target.add(User.objects.get(username=target))
+            message.save()
+
+            form = SendMessageForm(initial={target=form.cleaned_data['target']})
+            return HttpResponseRedirect(reverse('members:message'))
+    else:
+        form = SendMessageForm()
+    
+    return HttpResponseRedirect(reverse('members:message'))

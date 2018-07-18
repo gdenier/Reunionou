@@ -10,7 +10,8 @@
     {% url 'members:profil' as profil %}
     <li><a href="{{ profil }}" class="{% if request.path == profil %}is-active{% endif %}">Profil</a></li>
     <!-- MESSAGES -->
-    <li><a href="">Messages</a></li>
+    {% url 'members:message' as profil %}
+    <li><a href="{{ profil }}" class="{% if request.path == profil %}is-active{% endif %}">Messages</a></li>
   </ul>
   <p class="menu-label">Général</p>
   <ul class="menu-list">
