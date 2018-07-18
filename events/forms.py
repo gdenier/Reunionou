@@ -8,7 +8,7 @@ class NewForm(ModelForm):
 
     class Meta:
         model = Event
-        fields = ['title', 'description', 'date', 'addresse']
+        fields = ['title', 'description', 'date', 'addrese']
         widgets = {
             'description': Textarea(attrs={'cols':80, 'rows':20, 'placeholder': 'ceci est la description'}), #tinyMCE
         }

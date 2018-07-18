@@ -33,7 +33,7 @@ def New_view(request):
                 token=token_tmp,
                 author=request.user,
                 public=0,
-                addresse=form.cleaned_data['addresse']
+                addrese=form.cleaned_data['addrese']
             )
             event.save()
             content_type = ContentType.objects.get(app_label='events', model='Event')
@@ -83,7 +83,7 @@ def Change_view(request, token):
                 event.title=form.cleaned_data['title']
                 event.description=form.cleaned_data['description']
                 event.date=form.cleaned_data['date']
-                event.addresse=form.cleaned_data['addresse']
+                event.addrese=form.cleaned_data['addrese']
 
                 event.save()
 
@@ -94,7 +94,7 @@ def Change_view(request, token):
                 'title': event.title,
                 'description': event.description,
                 'date': event.date,
-                'addresse': event.addresse,
+                'addrese': event.addrese,
             })
         
         return render(request, 'events/change.html', locals())
