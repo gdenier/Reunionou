@@ -1,0 +1,69 @@
+{% extends "base_with_hero.html" %}
+
+{% block title %}{{ block.super }} - Inscription{% endblock title %}
+{% block page_name %}register{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="columns">
+    <div class="column">
+    </div>
+    <div class="column is-three-fifths">
+
+      {% for message in messages %}
+        <div {% if message.tags %}class="{{ message.tags }}"{% endif %}>
+          <button class="delete"></button>
+          {{ message }}
+        </div>
+      {% endfor %}
+
+      <div class="box">
+        <h1 class="title">Inscription</h1>
+        <form method="POST" action="{% url 'members:register' %}">
+          {% csrf_token %}
+          <div class="field">
+            <div class="control has-icons-left">
+              {{ form.username }}
+              <span class="icon is-small is-left">
+                <i class="fas fa-user"></i>
+              </span>
+            </div>
+          </div>
+          <div class="field">
+            <div class="control has-icons-left">
+              {{ form.email }}
+              <span class="icon is-small is-left">
+                <i class="fas fa-at"></i>
+              </span>
+            </div>
+          </div>
+          <div class="field">
+            <div class="control has-icons-left">
+              {{ form.password }}
+              <span class="icon is-small is-left">
+                <i class="fas fa-lock"></i>
+              </span>
+            </div>
+          </div>
+          <div class="field">
+            <div class="control has-icons-left">
+              {{ form.password_conf }}
+              <span class="icon is-small is-left">
+                <i class="fas fa-key"></i>
+              </span>
+            </div>
+          </div>
+          <div class="has-text-right">
+            <input type="submit" value="Inscription" class="button is-primary" />
+          </div>
+        </form>
+      </div>
+      <p class="has-text-centered">Vous êtes déjà inscrit?
+        <a href="{% url 'members:login' %}">Connectez-vous</a>
+      </p>
+    </div>
+    <div class="column">
+    </div>
+  </div>
+</div>
+{% endblock content %}

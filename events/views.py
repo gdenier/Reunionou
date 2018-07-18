@@ -41,7 +41,7 @@ def New_view(request):
                 token=token_tmp,
                 author=request.user,
                 public=0,
-                addrese="{} {} {}, {} {}".format(
+                address="{} {} {}, {} {}".format(
                     form.cleaned_data['street_number'],
                     str(form.cleaned_data['type_street'])[2:-2], # formater dans le POST avec des crochet et paranthese autour donc les enlever avec [2:-2]
                     form.cleaned_data['street'],
@@ -78,7 +78,7 @@ def Detail_view(request, token):
     comments = sort_comment(comments)
     form = CommentForm()
 
-    addrese = event.addrese.replace(' ', '%20') #to coresspond to the url requirement
+    address = event.address.replace(' ', '%20') #to coresspond to the url requirement
 
     if request.user.is_authenticated:
         
@@ -114,7 +114,7 @@ def Change_view(request, token):
                 event.title=form.cleaned_data['title']
                 event.description=form.cleaned_data['description']
                 event.date=form.cleaned_data['date']
-                event.addrese="{} {} {}, {} {}".format(
+                event.address="{} {} {}, {} {}".format(
                     form.cleaned_data['street_number'],
                     str(form.cleaned_data['type_street'])[2:-2],
                     form.cleaned_data['street'],
@@ -131,11 +131,11 @@ def Change_view(request, token):
                 'title': event.title,
                 'description': event.description,
                 'date': event.date,
-                'street_number': int(event.addrese.split(',')[0].split(' ')[0]),
-                'type_street': event.addrese.split(',')[0].split(' ')[1],
-                'street': event.addrese.split(',')[0][(event.addrese.split(',')[0].find(event.addrese.split(',')[0].split(' ')[1]))+len(event.addrese.split(',')[0].split(' ')[1])+1:], # selection de la ligne a partir de <type de rue> jusqu'a la virgule
-                'postcode': event.addrese.split(', ')[1].split(' ')[0],
-                'country': event.addrese.split(', ')[1].split(' ')[1],
+                'street_number': int(event.address.split(',')[0].split(' ')[0]),
+                'type_street': event.address.split(',')[0].split(' ')[1],
+                'street': event.address.split(',')[0][(event.address.split(',')[0].find(event.address.split(',')[0].split(' ')[1]))+len(event.address.split(',')[0].split(' ')[1])+1:], # selection de la ligne a partir de <type de rue> jusqu'a la virgule
+                'postcode': event.address.split(', ')[1].split(' ')[0],
+                'country': event.address.split(', ')[1].split(' ')[1],
             })
         
         return render(request, 'events/change.html', locals())

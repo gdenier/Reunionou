@@ -21,7 +21,7 @@ class Event(models.Model):
             (string)
         author -- the promoter of the event
             (string)
-        addrese -- the addrese of the event
+        address -- the address of the event
             (string)
         public -- a boolean field to know if the event is public
             (boolean)
@@ -31,7 +31,7 @@ class Event(models.Model):
     date = models.DateTimeField('date published')
     token = models.CharField(max_length=256)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    addrese = models.CharField(max_length=256)
+    address = models.CharField(max_length=256)
     public = models.BooleanField()
 
     def __str__(self):

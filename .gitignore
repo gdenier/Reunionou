@@ -4,6 +4,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-migrations
+migrations/
 
 db.sqlite3
