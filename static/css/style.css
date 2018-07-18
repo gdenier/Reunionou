@@ -9,3 +9,5 @@ body {
 body > section.section {
     flex: 1;
 }
+
+#mapid { height: 180px; }
