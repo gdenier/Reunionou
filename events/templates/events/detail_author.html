@@ -84,11 +84,11 @@
             }).addTo(mymap);
 
             var marker = L.marker(coord).addTo(mymap);
-            marker.bindPopup("<center><b>First Marker</b></center><br>{{ event.addresse }}").openPopup();
+            marker.bindPopup("<center><b>First Marker</b></center><br>{{ event.addrese }}").openPopup();
         }
 
         var xmlhttp = new XMLHttpRequest();
-        var url = "https://nominatim.openstreetmap.org/search?format=json&limit=3&q={{ addresse }}";
+        var url = "https://nominatim.openstreetmap.org/search?format=json&limit=3&q={{ addrese }}";
 
         xmlhttp.onreadystatechange = function()
         {

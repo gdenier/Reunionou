@@ -20,6 +20,15 @@ from .models import Event, Guest, Comment, Like_Dislike
 #-- créer une permission pour chaque event pour qu'un groupe puisse le modifier (auteur + personel autorise)
 @login_required
 def New_view(request):
+    """
+        Function to creat an event
+        
+        Firstly:
+        The function create the form and send it to the template.
+
+        Secondly:
+        The function take data and insert them in the database with the right format.
+    """
 
     if request.method == 'POST':
         form = NewForm(request.POST)
@@ -32,9 +41,9 @@ def New_view(request):
                 token=token_tmp,
                 author=request.user,
                 public=0,
-                addresse="{} {} {}, {} {}".format(
+                addrese="{} {} {}, {} {}".format(
                     form.cleaned_data['street_number'],
-                    str(form.cleaned_data['type_street'])[2:-2],
+                    str(form.cleaned_data['type_street'])[2:-2], # formater dans le POST avec des crochet et paranthese autour donc les enlever avec [2:-2]
                     form.cleaned_data['street'],
                     form.cleaned_data['postcode'],
                     form.cleaned_data['country'],
@@ -56,14 +65,20 @@ def New_view(request):
     return render(request, 'events/new.html', locals())
 
 def Detail_view(request, token):
+    """
+        Function to dispach user to the right template.
+
+        The function take all the data necessary on the database
+        before send them to the template.
+    """
 
     event = get_object_or_404(Event, token=token)
     inscrits = event.guest_set.all()
     comments = event.comment_set.all().order_by('date')
-    comments = trie_comment(comments)
+    comments = sort_comment(comments)
     form = CommentForm()
 
-    addresse = event.addresse.replace(' ', '%20')
+    addrese = event.addrese.replace(' ', '%20') #to coresspond to the url requirement
 
     if request.user.is_authenticated:
         
@@ -78,6 +93,15 @@ def Detail_view(request, token):
 
 @login_required
 def Change_view(request, token):
+    """
+        The function to change an event
+
+        Firstly:
+        The function create the form and send it to the template.
+
+        Secondly:
+        The function take data and insert them in the database with the right format.
+    """
     if request.user.has_perm("events.change_event_{}".format(token)):
         event = get_object_or_404(Event, token=token, author=request.user)
 
@@ -90,7 +114,7 @@ def Change_view(request, token):
                 event.title=form.cleaned_data['title']
                 event.description=form.cleaned_data['description']
                 event.date=form.cleaned_data['date']
-                event.addresse="{} {} {}, {} {}".format(
+                event.addrese="{} {} {}, {} {}".format(
                     form.cleaned_data['street_number'],
                     str(form.cleaned_data['type_street'])[2:-2],
                     form.cleaned_data['street'],
@@ -107,11 +131,11 @@ def Change_view(request, token):
                 'title': event.title,
                 'description': event.description,
                 'date': event.date,
-                'street_number': int(event.addresse.split(',')[0].split(' ')[0]),
-                'type_street': event.addresse.split(',')[0].split(' ')[1],
-                'street': event.addresse.split(',')[0][(event.addresse.split(',')[0].find(event.addresse.split(',')[0].split(' ')[1]))+len(event.addresse.split(',')[0].split(' ')[1])+1:], # selection de la ligne a partir de <type de rue> jusqu'a la virgule
-                'postcode': event.addresse.split(', ')[1].split(' ')[0],
-                'country': event.addresse.split(', ')[1].split(' ')[1],
+                'street_number': int(event.addrese.split(',')[0].split(' ')[0]),
+                'type_street': event.addrese.split(',')[0].split(' ')[1],
+                'street': event.addrese.split(',')[0][(event.addrese.split(',')[0].find(event.addrese.split(',')[0].split(' ')[1]))+len(event.addrese.split(',')[0].split(' ')[1])+1:], # selection de la ligne a partir de <type de rue> jusqu'a la virgule
+                'postcode': event.addrese.split(', ')[1].split(' ')[0],
+                'country': event.addrese.split(', ')[1].split(' ')[1],
             })
         
         return render(request, 'events/change.html', locals())
@@ -120,11 +144,31 @@ def Change_view(request, token):
 
 @login_required
 def List_view(request):
+    """
+        The function to retrieve all the event to put on the list.
+
+        The list can be watched on typical list or on the map.
+    """
     events = Event.objects.filter(public=1)
     return render(request, 'events/list.html', locals())
 
 
 def Register_view(request, token, args='default'):
+    """
+        The function to register a guest for an event.
+
+        There is 3 case possible:
+            - the user already have an account on the site (1)
+            - the user want to create an account (2)
+            - the user just want to be a guest (3)
+        
+        In all case the function create a guest input for the event.
+        And function of the case we perform action:
+            1) it's finished and go back to the event's detail
+            2) we create a user account and we connect him
+                then go back to the event's detail
+            3) it's finished and go back to eh event"s detail
+    """
     event = Event.objects.get(token=token)
     if request.user.is_authenticated:
         
@@ -194,6 +238,15 @@ def Register_view(request, token, args='default'):
 
 @login_required
 def Comment_view(request, token):
+    """
+        The function to create a comment of the event
+
+        The function take data from a form add in ajax
+        and insert them in the database with the right format.
+
+        Then there is some permission created for the owner of the comment,
+        and the owner of the event.
+    """
     if request.method == 'POST':
         comment = Comment()
         if request.POST.get('father'):
@@ -232,7 +285,10 @@ def Comment_view(request, token):
        
     return HttpResponseRedirect(reverse('events:detail', args=[token]))
 
-def trie_comment(comments, trie=None):
+def sort_comment(comments, sort=None):
+    """
+        A simple function for sort comments
+    """
     comments_bis = []
     for comment in comments:
         if comment.response_to == None:
@@ -243,6 +299,12 @@ def trie_comment(comments, trie=None):
     return comments_bis
 
 def Comment_Edit_view(request, token, comment_id):
+    """
+        The function for edit a comment.
+
+        The function take data from a form add in ajax
+        and modify actual comment data.
+    """
     if request.user.has_perm("events.edit_comment_{}".format(comment_id)):
         if request.method == 'POST':
             com = Comment.objects.get(id=comment_id)
@@ -256,6 +318,14 @@ def Comment_Edit_view(request, token, comment_id):
 
 @login_required
 def Delete_com_view(request, token, comment_id):
+    """
+        The function to delete a comment.
+
+        The function can be call by the owner of the comment and the owner of the event.
+
+        The function don't delete the comment but set the <deleted> field to True.
+    """
+
     if request.user.has_perm("events.delete_comment_{}".format(comment_id)):
         comment = Comment.objects.get(pk=comment_id)
         comment.deleted = True
@@ -266,6 +336,14 @@ def Delete_com_view(request, token, comment_id):
 
 @login_required
 def Like_com_view(request, token, comment_id):
+    """
+        The function to like a comment.
+
+        The function increment the like field in Comment table.
+
+        The function also create a line in Like_Dislike table to make the link
+        between the comment and the user who like.
+    """
     try:
         like = Like_Dislike.objects.get(user=request.user, com=Comment.objects.get(pk=comment_id))
         if like.value == False:
@@ -290,6 +368,14 @@ def Like_com_view(request, token, comment_id):
 
 @login_required
 def Dislike_com_view(request, token, comment_id):
+    """
+        The function to dislike a comment.
+
+        The function increment the dislike field in Comment table.
+
+        The function also create a line in Like_Dislike table to make the link
+        between the comment and the user who dislike.
+    """
     try:
         dislike = Like_Dislike.objects.get(user=request.user, com=Comment.objects.get(pk=comment_id))
         if dislike.value == True:

@@ -14,6 +14,9 @@ from .forms import ChangeForm
 
 @login_required
 def home_view(request):
+    """
+        The function to show the user's dashboard.
+    """
     events = request.user.event_set.all()
 
     event_exist = True if len(events) >= 0 else False
@@ -22,12 +25,24 @@ def home_view(request):
 
 @login_required(login_url='')
 def logout_view(request):
+    """
+        The function to logout the user and to redirect him to the login page.
+    """
     logout(request)
     messages.success(request, "Vous avez été déconnecté avec succès")
     return HttpResponseRedirect(reverse('index:login'))
 
 @login_required
 def change_view(request):
+    """
+        The function to change user's information.
+
+        Firstly:
+        The function create the form with actual data and send it to the template.
+
+        Secondly:
+        The function take data and modify actual value with the right format.
+    """
     if request.method == 'POST':
         form = ChangeForm(request.POST)
         if form.is_valid():

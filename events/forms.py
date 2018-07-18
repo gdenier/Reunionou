@@ -5,7 +5,9 @@ from django.utils.translation import gettext_lazy as _
 from .models import Event, Guest, Comment
 
 class NewForm(forms.ModelForm):
-
+    """
+        Form to creat or change an event
+    """
     class Meta:
         model = Event
         fields = ['title', 'description', 'date']
@@ -32,11 +34,17 @@ class NewForm(forms.ModelForm):
     type_street = forms.MultipleChoiceField(label="type de rue", choices=TYPE_CHOICES)
 
 class InvitForm(forms.ModelForm):
+    """
+        Form to creat a guest for an event
+    """
     class Meta:
         model = Guest
         fields = ['last_name', 'first_name', 'age', 'email', 'password']
 
 class CommentForm(forms.ModelForm):
+    """
+        Form to write a comment for an event
+    """
     class Meta:
         model = Comment
         fields = ['core']
