@@ -23,6 +23,6 @@ class Message(models.Model):
             (multiple)
     """
     content = models.CharField(max_length=600)
-    date = models.DateTimeField('date published')
+    date = models.DateTimeField('date published', auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     target = models.ManyToManyField(User, related_name='targets')

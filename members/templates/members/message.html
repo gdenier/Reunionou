@@ -4,5 +4,39 @@
 {% block page_name %}message{% endblock %}
 
 {% block account_content %}
-    <p>Some Messages</p>
+    <div class="columns">
+        <div class="column is-one-third" style="border: 1px solid red">
+            {% for target, last in targets %} <!-- la liste des targets est trié par date de dernier message (recu et envoyer) -->
+                <button class="target">
+                    <p>{{ target.username }}</p>
+                    <p>last message: {{ last }}</p>
+                </button>
+            {% endfor %}
+        </div>
+
+        <div class="column" style="border: 1px solid blue">
+            {% for message in messages %} <!-- Pour l'instant y'a tout les messages recu uniquement -->
+                <div style="border: 1px solid green">
+                    <p>{{ message.content}}</p>
+                    <p>send by: {{ message.author }}</p>
+                    <p>send to: {{ message.target.username }}</p>
+                </div>
+            {% endfor %}
+
+            <form method="POST" action="{% url 'members:send_message' %}">
+                {% csrf_token %}
+                {{ form.target }}
+                {{ form.content }}
+                <input type="submit" value="Envoyer"/>
+            </form>
+        </div>
+    </div>
 {% endblock account_content %}
+
+{% block script %}
+    <script>
+        var SCRF_TOKEN = '{{ csrf_token }}';
+
+        
+    </script>
+{% endblock %}
