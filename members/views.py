@@ -6,6 +6,8 @@ from django.contrib import messages
 from django.contrib.auth import  logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
+
 
 from events.models import Event
 from .models import Message
@@ -79,9 +81,9 @@ def change_view(request):
     return render(request, 'members/change.html', locals())
 
 @login_required
-def getMessage(request, author):
-    messages = request.user.targets.filter(author=author).order_by('date').values()
-    return JsonResponse(messages)
+def getMessage(request):
+    messages = serializers.serialize('json', request.user.targets.filter(author=User.objects.get(pk=request.GET['author_id'])).order_by('date'))
+    return JsonResponse(messages, safe=False)
 
 @login_required
 def message_view(request):
@@ -127,5 +129,15 @@ def send_message(request):
             message.save()
 
             form = SendMessageForm(initial={'target': form.cleaned_data['target']})
-    
-    return HttpResponseRedirect(reverse('members:message'))
+        
+        if request.POST['author_id']:
+            message = Message(
+                content=request.POST['content'],
+                author = request.user,
+            )
+            message.save()
+            author_id = request.POST['author_id'].split(', ')
+            for auth in author_id:
+                message.target.add(User.objects.get(pk=auth))
+            message.save()
+    return JsonResponse("ok", safe=False)
