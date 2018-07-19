@@ -10,7 +10,7 @@ $(function(){
                 '<input type="hidden" name="csrfmiddlewaretoken" value="'+SCRF_TOKEN+'"/>'+
             '</form>'
         );
-    })
+    });
 
     $(".answer").click(function(){
         father = jQuery(this).val();
@@ -23,5 +23,5 @@ $(function(){
                 '<input type="hidden" name="father" value="'+father+'"/>'+
             '</form>'
         );
-    })
-})
+    });
+});
