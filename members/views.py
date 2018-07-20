@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 
 
-from events.models import Event
+from events.models import Event, Guest, Comment
 from .models import Message
 from .forms import ChangeForm, SendMessageForm
 
@@ -20,9 +20,16 @@ def home_view(request):
     """
         The function to show the user's dashboard.
     """
-    events = request.user.event_set.all()
-
-    event_exist = True if len(events) >= 0 else False
+    my_events = request.user.event_set.all().order_by('-date')[:4] # les 4 evenemtns les plus proche que l'utilisateur organise
+    guest_events = Event.objects.filter(user=request.user).order_by('-date')[:4] # les 4 evenement les plus proches auquel l'utilisateur est inscrit
+    messages = request.user.targets.all().order_by('-date')[:4] # les 4 derniers message que l'utilisateurs a recu
+    responses = Comment.objects.exclude(response_to = None).order_by('-date')
+    com_reponses = []
+    for response in responses:
+        if len(com_reponses) > 3:
+            break
+        elif response.response_to.author == request.user:
+            com_reponses.append(response)
 
     return render(request, 'members/home.html', locals())
 

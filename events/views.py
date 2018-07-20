@@ -73,7 +73,8 @@ def Detail_view(request, token):
     """
 
     event = get_object_or_404(Event, token=token)
-    inscrits = event.guest_set.all()
+    inscrits_guest = event.guest.all()
+    inscrits_user = event.user.all()
     comments = event.comment_set.all().order_by('date')
     comments = sort_comment(comments)
     form = CommentForm()
@@ -162,12 +163,11 @@ def Register_view(request, token, args='default'):
             - the user want to create an account (2)
             - the user just want to be a guest (3)
         
-        In all case the function create a guest input for the event.
         And function of the case we perform action:
-            1) it's finished and go back to the event's detail
-            2) we create a user account and we connect him
+            1) add the user to the event table and it's finished and go back to the event's detail
+            2) we create a user account link to the event and we connect him
                 then go back to the event's detail
-            3) it's finished and go back to eh event"s detail
+            3) we create a guest account linked to the event and it's finished and go back to the event's detail
     """
     event = Event.objects.get(token=token)
     if request.user.is_authenticated:
@@ -175,14 +175,8 @@ def Register_view(request, token, args='default'):
         #inscription avec info perso du compte
         if args == 'accept':
             
-            guest = Guest(
-                last_name=request.user.last_name,
-                first_name=request.user.first_name,
-                email=request.user.email,
-                event=event,
-                user=request.user,
-            )
-            guest.save()
+            event.user.add(request.user)
+            event.save()
 
             return HttpResponseRedirect(reverse('events:detail', args=[token]))
 
@@ -197,15 +191,9 @@ def Register_view(request, token, args='default'):
                     if form.cleaned_data['password'] == form.cleaned_data['password_conf']:
                         user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password'])
                         login(request, user)
-
-                        guest = Guest(
-                            last_name=user.first_name,
-                            first_name=user.first_name,
-                            email=user.email,
-                            event=event,
-                            user=request.user,
-                        )
-                        guest.save()
+                        
+                        event.user.add(user)
+                        event.save()
                         
                         return HttpResponseRedirect(reverse('events:detail', args=[token]))
             else:
@@ -224,9 +212,10 @@ def Register_view(request, token, args='default'):
                         age=form.cleaned_data['age'],
                         email=form.cleaned_data['email'],
                         password=make_password(form.cleaned_data['password'], '100000'),
-                        event=event,
                     )
                     guest.save()
+                    event.guest.add(guest)
+                    event.save()
 
                     return HttpResponseRedirect(reverse('events:detail', args=[token]))
             else:
