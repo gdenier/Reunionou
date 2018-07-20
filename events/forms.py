@@ -12,7 +12,9 @@ class NewForm(forms.ModelForm):
         model = Event
         fields = ['title', 'description', 'date']
         widgets = {
-            'description': forms.Textarea(attrs={'cols':80, 'rows':20, 'placeholder': 'ceci est la description'}), #tinyMCE
+            'title': forms.TextInput(attrs={'class': 'input', 'placeholder': 'Titre de l\'évènement'}),
+            'description': forms.Textarea(attrs={'class': 'input', 'placeholder': 'Description de l\'évènement'}),
+            'date': forms.DateTimeInput(attrs={'class': 'input', 'placeholder': 'Date de l\'évènement'}),
         }
         help_texts = {
             'description': _("Some useful help text"),
@@ -23,15 +25,20 @@ class NewForm(forms.ModelForm):
             }
         }
 
+    NATURE_CHOICES = (
+        ('public', u'Public'),
+        ('prive', u'Privé'),
+    )
+    nature = forms.ChoiceField(label="Nature", choices=NATURE_CHOICES, widget=forms.RadioSelect())
     street = forms.CharField(label="Rue", max_length=80, widget=forms.TextInput(attrs={'class': 'input', 'placeholder': 'Nom de la rue'}))
-    street_number = forms.IntegerField(label="N° de rue")
-    postcode = forms.IntegerField(label="Code postal")
+    street_number = forms.IntegerField(label="N° de rue", widget=forms.TextInput(attrs={'class':'input', 'placeholder': 'N° de rue'}))
+    postcode = forms.IntegerField(label="Code Postal", widget=forms.TextInput(attrs={'class':'input', 'placeholder': 'Code Postal'}))
     country = forms.CharField(label="Pays", max_length=20, widget=forms.TextInput(attrs={'class': 'input', 'placeholder': 'Pays'}))
     TYPE_CHOICES = (
         ('rue', u'rue'),
-        ('avenur', u'avenue'),
+        ('avenue', u'avenue'),
     )
-    type_street = forms.MultipleChoiceField(label="type de rue", choices=TYPE_CHOICES)
+    type_street = forms.ChoiceField(label="type de rue", choices=TYPE_CHOICES)
 
 class InvitForm(forms.ModelForm):
     """

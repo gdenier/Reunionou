@@ -1,58 +1,61 @@
-{% extends "base.html" %}
+{% extends "members/account.html" %}
 
 
-{% block title %} {{ block.super }} - New Event {% endblock %}
+{% block title %} {{ block.super }} - Nouvel évènement {% endblock %}
 
-{% block content %}
-    <section id="new_event">
-        <div class="container">
-            <div class="box">
-                <div class="panel">
-                    <h1>Nouvel évènement</h1>
-                    <hr>
-                    <form method="POST" action="{% url 'events:new' %}">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <div class="input-group">
-                                <div class="input-group-addon">
-                                    <span class="input-group-text"><i class="fas fa-clipboard"></i></span>
-                                </div>
-                                {{ form.title }}
-                            </div>
+{% block account %}
+<h1 class="title">Nouvel évènement</h1>
+<hr>
+<form method="POST" action="{% url 'events:new' %}">
+	{% csrf_token %}
+	<div class="field">
+		<div class="control has-icons-left">
+			{{ form.title }}
+			<span class="icon is-small is-left">
+				<i class="fas fa-clipboard"></i>
+			</span>
+		</div>
+	</div>
 
-                            <div class="input-group">
-                                <div class="input-group-addon">
-                                    <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
-                                </div>
-                                {{ form.description }}
-                            </div>
+	<div class="input-group">
+		<div class="input-group-addon">
+			<span class="input-group-text"><i class="fas fa-file-alt"></i></span>
+		</div>
+		{{ form.description }}
+	</div>
 
-                            <div class="input-group">
-                                {% if form.date.errors %}
-                                    {{ form.date.errors }} <!-- c'est le format pour faire apparaitre les messages d'erreur a voir si tu veux en faire afficher d'autres -->
-                                {% endif %}
-                                <div class="input-group-addon">
-                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                </div>
-                                {{ form.date }}
-                            </div>
+	<div class="input-group">
+		{% if form.date.errors %}
+			{{ form.date.errors }} <!-- c'est le format pour faire apparaitre les messages d'erreur a voir si tu veux en faire afficher d'autres -->
+		{% endif %}
+		<div class="input-group-addon">
+			<span class="input-group-text"><i class="fas fa-calendar"></i></span>
+		</div>
+		{{ form.date }}
+	</div>
 
-                            <div class="input-group">
-                                <div class="input-group-addon">
-                                    <span class="input-group-text"><i class="fas fa-map-marker"></i></span>
-                                </div>
-                                {{ form.street_number }}
-                                {{ form.type_street }}
-                                {{ form.street }}
-                                {{ form.postcode }}
-                                {{ form.country }}
-                            </div>
+	<div class="control">
+		{% for radio in form.nature %}
+		<label for="{{ radio.id_for_label }}" class="radio">
+			{{ radio.tag }}
+			{{ radio.choice_label }}
+		</label>
+		{% endfor %}
+	</div>
 
-                            <input type="submit" value="Créer" class="btn btn-primary">
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-{% endblock content %}
+	<div class="input-group">
+		<div class="input-group-addon">
+			<span class="input-group-text"><i class="fas fa-map-marker"></i></span>
+		</div>
+		{{ form.street_number }}
+		<div class="select">
+			{{ form.type_street }}
+		</div>
+		{{ form.street }}
+		{{ form.postcode }}
+		{{ form.country }}
+	</div>
+
+	<input type="submit" value="Créer" class="btn btn-primary">
+</form>
+{% endblock account %}
