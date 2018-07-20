@@ -5,6 +5,33 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 # Create your models here.
+class Guest(models.Model):
+    """
+        Model for Event's Guest
+
+        Keyword:
+        last_name -- the last name of the guest
+            (string)
+        first_name -- the first name of the guest
+            (string)
+        age -- the age of the guest
+            (int)
+        email -- the email of the guest
+            (string)
+        password -- the password of the guest
+            (string)
+            (Django's ash method)
+        event -- the event which the guest in registered
+            (Event)
+        user -- can be the User who the guest is linked
+            (User)
+            (optional)
+    """
+    last_name = models.CharField(max_length=80, null=True)
+    first_name = models.CharField(max_length=80, null=True)
+    age = models.PositiveSmallIntegerField(null=True)
+    email = models.CharField(max_length=80, null=True)
+    password = models.CharField(max_length=80, null=True)
 
 class Event(models.Model):
     """
@@ -33,39 +60,12 @@ class Event(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.CharField(max_length=256)
     public = models.BooleanField()
+    guest = models.ManyToManyField(Guest)
+    user = models.ManyToManyField(User, related_name='users')
 
     def __str__(self):
         return self.title
 
-class Guest(models.Model):
-    """
-        Model for Event's Guest
-
-        Keyword:
-        last_name -- the last name of the guest
-            (string)
-        first_name -- the first name of the guest
-            (string)
-        age -- the age of the guest
-            (int)
-        email -- the email of the guest
-            (string)
-        password -- the password of the guest
-            (string)
-            (Django's ash method)
-        event -- the event which the guest in registered
-            (Event)
-        user -- can be the User who the guest is linked
-            (User)
-            (optional)
-    """
-    last_name = models.CharField(max_length=80, null=True)
-    first_name = models.CharField(max_length=80, null=True)
-    age = models.PositiveSmallIntegerField(null=True)
-    email = models.CharField(max_length=80, null=True)
-    password = models.CharField(max_length=80, null=True)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 class Comment(models.Model):
     """
