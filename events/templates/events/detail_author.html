@@ -11,6 +11,9 @@
     <!-- aucune idée de la mise en page vus que tu a tout changé mais toutes les données sont la -->
     <a href="{% url 'events:change' event.token %}">Modifier</a>
 
+    <p>{{ event.address }}</p>
+    <a href="https://www.google.fr/maps/place/{{ event.address|replaceSpace }}">Voir sur Google Map</a>
+
     <h4>Inscrit</h4>
     {% for inscrit in inscrits %}
         <p>{{ inscrit.last_name }}</p>
