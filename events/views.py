@@ -1,8 +1,10 @@
 import uuid
 from datetime import datetime
+import requests
+import json
 
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.models import User, Permission
 from django.shortcuts import get_object_or_404
@@ -386,3 +388,38 @@ def Dislike_com_view(request, token, comment_id):
         dislike.save()
 
     return HttpResponseRedirect(reverse('events:detail', args=[token]))
+
+def getSetPos(request):
+    borne_inf = [request.GET['lat_inf'], request.GET['lng_inf']]
+    borne_sup = [request.GET['lat_sup'], request.GET['lng_sup']]
+
+    events = Event.objects.filter(public=True)
+    events_to_send = {}
+    
+    for event in events:
+        result = requests.get("https://nominatim.openstreetmap.org/search?format=json&limit=3&q={}".format(event.address))
+        result = result.json()
+        
+        if borne_inf[0] > borne_sup [0] and borne_inf[1] < borne_sup[1]:
+            if result[0]['lat'] <= borne_inf[0] and result[0]['lat'] >= borne_sup[0] and result[0]['lon'] >= borne_inf[1] and result[0]['lon'] <= borne_sup[1]:
+                events_to_send[event.token] = {'lat': result[0]['lat'], 'lng': result[0]['lon'], 'title': event.title, 'address': event.address}
+        
+        elif borne_inf[0] > borne_sup[0] and borne_inf[1] > borne_sup[1]:
+            if (result[0]['lon'] > borne_inf[1] and result[0]['lon'] < 90) or (result[0]['lon'] < borne_sup[1] and result[0]['lon'] > -90):
+                events_to_send[event.token] = {'lat': result[0]['lat'], 'lng': result[0]['lon'], 'title': event.title, 'address': event.address}
+        
+        elif borne_inf[0] < borne_sup[0] and borne_inf[1] < borne_sup[1]:
+            if (result[0]['lat'] > borne_inf[0] and result[0]['lat'] < 180) or (result[0]['lat'] < borne_sup[0] and result[0]['lat'] > -180):
+                events_to_send[event.token] = {'lat': result[0]['lat'], 'lng': result[0]['lon'], 'title': event.title, 'address': event.address}
+
+        else:
+            if result[0]['lat'] >= borne_inf[0] and result[0]['lat'] <= borne_sup[0] and result[0]['lon'] <= borne_inf[1] and result[0]['lon'] >= borne_sup[1]:
+                events_to_send[event.token] = {'lat': result[0]['lat'], 'lng': result[0]['lon'], 'title': event.title, 'address': event.address}
+    
+    jsonarray = json.dumps(events_to_send, ensure_ascii=False)
+    return JsonResponse(jsonarray, safe=False)
+        
+        
+
+
+    

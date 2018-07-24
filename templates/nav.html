@@ -19,6 +19,9 @@
                 <a href="{% url 'index:home' %}" class="navbar-item">
                     Accueil
                 </a>
+                <a href="{% url 'events:list' %}" class="navbar-item">
+                    Liste des Evenements
+                </a>
                 {% if user.is_authenticated %}
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a href="" class="navbar-link">
