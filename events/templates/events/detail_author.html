@@ -14,9 +14,14 @@
     <p>{{ event.address }}</p>
     <a href="https://www.google.fr/maps/place/{{ event.address|replaceSpace }}">Voir sur Google Map</a>
 
-    <h4>Inscrit</h4>
-    {% for inscrit in inscrits %}
-        <p>{{ inscrit.last_name }}</p>
+    <h4>Inscrit User</h4>
+    {% for inscrit in inscrits_user %}
+        <p style="color:red">{{ inscrit.username }}</p>
+    {% endfor %}
+
+    <h4>Inscrit Guest</h4>
+    {% for inscrit in inscrits_guest %}
+        <p style="color:blue">{{ inscrit.last_name }}</p>
     {% endfor %}
 
     <h4>Commentaire</h4>

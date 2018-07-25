@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 
 
-from events.models import Event, Guest, Comment
+from events.models import Event, Guest, Comment, Registrant
 from .models import Message
 from .forms import ChangeForm, SendMessageForm
 
@@ -21,15 +21,20 @@ def home_view(request):
         The function to show the user's dashboard.
     """
     my_events = request.user.event_set.all().order_by('-date')[:4] # les 4 evenemtns les plus proche que l'utilisateur organise
-    guest_events = Event.objects.filter(user=request.user).order_by('-date')[:4] # les 4 evenement les plus proches auquel l'utilisateur est inscrit
+    
+    guest_events = [guest.event for guest in Registrant.objects.filter(user=request.user).order_by('-event__date')[:4]] # les 4 evenement les plus proches auquel l'utilisateur est inscrit
+
     messages = request.user.targets.all().order_by('-date')[:4] # les 4 derniers message que l'utilisateurs a recu
-    responses = Comment.objects.exclude(response_to = None).order_by('-date')
+    
+    responses = Comment.objects.exclude(response_to = None).order_by('-date') # les 4 dernieres reposnes que l'utilisateur a recu
     com_reponses = []
     for response in responses:
         if len(com_reponses) > 3:
             break
         elif response.response_to.author == request.user:
             com_reponses.append(response)
+
+    notif = getNotif(request)
 
     return render(request, 'members/home.html', locals())
 
@@ -148,3 +153,46 @@ def send_message(request):
                 message.target.add(User.objects.get(pk=auth))
             message.save()
     return JsonResponse("ok", safe=False)
+
+@login_required
+def getNotif(request):
+    #-- MY EVENT
+    notify = {}
+    notify['my_event'] = {}
+    my_events = Event.objects.filter(author = request.user)
+    for event in my_events:
+        notify['my_event'][event] = {}
+        notify['my_event'][event]['registrant'] = 0
+        for registrant in event.registrant_set.all():
+            if registrant.register_date > request.user.last_login:
+                notify['my_event'][event]['registrant'] += 1
+        
+        notify['my_event'][event]['comment'] = 0
+        for comment in event.comment_set.all():
+            if comment.date > request.user.last_login:
+                notify['my_event'][event]['comment'] + 1
+
+    #-- OTHER EVENT
+    notify['other_event'] = {}
+    other_event = [registrant.event for registrant in request.user.registrant_set.all()]
+    for event in other_event:
+        notify['other_event'][event] = {}
+        notify['other_event'][event]['info'] = 0
+        notify['other_event'][event]['response'] = 0
+        for response in event.comment_set.exclude(response_to=None):
+            if response.response_to.author == request.user:
+                notify['other_event'][event]['response'] += 1
+
+    #-- MESSAGE
+    notify['message'] = {}
+    messages = Message.objects.filter(target=request.user).order_by('author')
+    for message in messages:
+        try:
+            notify['message'][message.author]
+            if message.date > request.user.last_login:
+                notify['message'][message.author] += 1
+        except KeyError:
+            if message.date > request.user.last_login:
+                notify['message'][message.author] = 1
+    
+    return notify

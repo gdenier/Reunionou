@@ -55,10 +55,12 @@ function getPos(position)
 
 mymap.on('zoomend', function(){
     getSetAddress(mymap, layer);
+    console.log("zoom");
 });
 
 mymap.on('moveend', function(){
     getSetAddress(mymap, layer);
+    console.log("move");
 });
 
 if(navigator.geolocation)

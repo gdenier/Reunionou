@@ -15,7 +15,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from .forms import NewForm, InvitForm, CommentForm
 from index.forms import SignupForm
-from .models import Event, Guest, Comment, Like_Dislike
+from .models import Event, Guest, Comment, Like_Dislike, Registrant
 
 # Create your views here.
 
@@ -75,8 +75,8 @@ def Detail_view(request, token):
     """
 
     event = get_object_or_404(Event, token=token)
-    inscrits_guest = event.guest.all()
-    inscrits_user = event.user.all()
+    inscrits_guest = Guest.objects.filter(pk__in=[registrant.guest.id for registrant in event.registrant_set.exclude(guest=None)])
+    inscrits_user = User.objects.filter(pk__in=[registrant.user.id for registrant in event.registrant_set.exclude(user=None)])
     comments = event.comment_set.all().order_by('date')
     comments = sort_comment(comments)
     form = CommentForm()
@@ -177,8 +177,12 @@ def Register_view(request, token, args='default'):
         #inscription avec info perso du compte
         if args == 'accept':
             
-            event.user.add(request.user)
-            event.save()
+            registrant = Registrant(
+                user = request.user,
+                guest = None,
+                event = event
+            )
+            registrant.save()
 
             return HttpResponseRedirect(reverse('events:detail', args=[token]))
 
@@ -194,8 +198,12 @@ def Register_view(request, token, args='default'):
                         user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password'])
                         login(request, user)
                         
-                        event.user.add(user)
-                        event.save()
+                        registrant = Registrant(
+                            user = user,
+                            guest = None,
+                            event = event
+                        )
+                        registrant.save()
                         
                         return HttpResponseRedirect(reverse('events:detail', args=[token]))
             else:
@@ -216,8 +224,13 @@ def Register_view(request, token, args='default'):
                         password=make_password(form.cleaned_data['password'], '100000'),
                     )
                     guest.save()
-                    event.guest.add(guest)
-                    event.save()
+
+                    registrant = Registrant(
+                        user = None,
+                        guest = guest,
+                        event = event
+                    )
+                    registrant.save()
 
                     return HttpResponseRedirect(reverse('events:detail', args=[token]))
             else:

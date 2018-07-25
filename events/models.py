@@ -26,6 +26,8 @@ class Guest(models.Model):
         user -- can be the User who the guest is linked
             (User)
             (optional)
+        date_inscription -- the date when the user register
+            (DateTime)
     """
     last_name = models.CharField(max_length=80, null=True)
     first_name = models.CharField(max_length=80, null=True)
@@ -60,12 +62,21 @@ class Event(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.CharField(max_length=256)
     public = models.BooleanField()
-    guest = models.ManyToManyField(Guest)
-    user = models.ManyToManyField(User, related_name='users')
 
     def __str__(self):
         return self.title
 
+class Registrant(models.Model):
+    """
+        Model for event's registrant
+
+        Keyword:
+
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    guest = models.ForeignKey(Guest, on_delete=models.CASCADE, null=True)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    register_date = models.DateTimeField('date register', auto_now_add=True)
 
 class Comment(models.Model):
     """
