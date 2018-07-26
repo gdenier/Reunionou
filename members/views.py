@@ -158,30 +158,35 @@ def send_message(request):
 def getNotif(request):
     #-- MY EVENT
     notify = {}
-    notify['my_event'] = {}
     my_events = Event.objects.filter(author = request.user)
-    for event in my_events:
-        notify['my_event'][event] = {}
-        notify['my_event'][event]['registrant'] = 0
-        for registrant in event.registrant_set.all():
-            if registrant.register_date > request.user.last_login:
-                notify['my_event'][event]['registrant'] += 1
-        
-        notify['my_event'][event]['comment'] = 0
-        for comment in event.comment_set.all():
-            if comment.date > request.user.last_login:
-                notify['my_event'][event]['comment'] + 1
+    if my_events:
+        notify['my_event'] = {}
+        notify['my_event']['tt'] = 0
+        for event in my_events:
+            notify['my_event'][event] = {}
+            notify['my_event'][event]['registrant'] = 0
+            for registrant in event.registrant_set.all():
+                if registrant.register_date > request.user.last_login:
+                    notify['my_event'][event]['registrant'] += 1
+                    notify['my_event']['tt'] += 1
+            
+            notify['my_event'][event]['comment'] = 0
+            for comment in event.comment_set.all():
+                if comment.date > request.user.last_login:
+                    notify['my_event'][event]['comment'] += 1
+                    notify['my_event']['tt'] += 1
 
     #-- OTHER EVENT
-    notify['other_event'] = {}
     other_event = [registrant.event for registrant in request.user.registrant_set.all()]
-    for event in other_event:
-        notify['other_event'][event] = {}
-        notify['other_event'][event]['info'] = 0
-        notify['other_event'][event]['response'] = 0
-        for response in event.comment_set.exclude(response_to=None):
-            if response.response_to.author == request.user:
-                notify['other_event'][event]['response'] += 1
+    if other_event:
+        notify['other_event'] = {}
+        for event in other_event:
+            notify['other_event'][event] = {}
+            notify['other_event'][event]['info'] = 0
+            notify['other_event'][event]['response'] = 0
+            for response in event.comment_set.exclude(response_to=None):
+                if response.response_to.author == request.user:
+                    notify['other_event'][event]['response'] += 1
 
     #-- MESSAGE
     notify['message'] = {}
