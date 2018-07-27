@@ -16,4 +16,5 @@ urlpatterns = [
     path('<token>/commentaire/delete/<int:comment_id>', views.Delete_com_view, name="delete_com"),
     path('<token>/commentaire/like/<int:comment_id>', views.Like_com_view, name="like_com"),
     path('<token>/commentaire/dislike/<int:comment_id>', views.Dislike_com_view, name="dislike_com"),
+    path('ajax/getsetevent/', views.getSetPos, name='setPos'),
 ]

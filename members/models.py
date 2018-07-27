@@ -26,3 +26,4 @@ class Message(models.Model):
     date = models.DateTimeField('date published', auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     target = models.ManyToManyField(User, related_name='targets')
+    
