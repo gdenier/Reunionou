@@ -1,6 +1,6 @@
 {% load static %}
 
-<nav class="navbar is-fixed-top {% if user.is_authenticated %}is-primary{% else %}is-light{% endif %}" role="navigation" aria-label="main navigation">
+<nav class="navbar is-fixed-top {% if user.is_authenticated %}is-info{% else %}is-light{% endif %}" role="navigation" aria-label="main navigation">
     <div class="container">
         <div class="navbar-brand">
             <a href="/" class="navbar-item">
@@ -16,7 +16,8 @@
     
         <div id="navbar-menu" class="navbar-menu">
             <div class="navbar-end">
-                <a href="{% url 'index:home' %}" class="navbar-item">
+                {% url 'index:home' as home %}
+                <a href="{{ home }}" class="navbar-item {% if request.path == home %}is-active{% endif %}">
                     Accueil
                 </a>
                 <a href="{% url 'events:list' %}" class="navbar-item">

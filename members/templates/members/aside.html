@@ -1,25 +1,34 @@
 <aside class="menu">
+  <p class="menu-label">Général</p>
   <ul class="menu-list">
     <!-- HOME -->
     {% url 'members:home' as home %}
     <li><a href="{{ home }}" class="{% if request.path == home %}is-active{% endif %}">Dashboard</a></li>
-  </ul>
-  <p class="menu-label">Compte</p>
-  <ul class="menu-list">
     <!-- PROFIL -->
     {% url 'members:profil' as profil %}
     <li><a href="{{ profil }}" class="{% if request.path == profil %}is-active{% endif %}">Profil</a></li>
+  </ul>
+  <p class="menu-label">Administration</p>
+  <ul class="menu-list">
     <!-- MESSAGES -->
-    {% url 'members:message' as profil %}
+    {% url 'members:message' as messages %}
     <li>
-      <a href="{{ profil }}" class="{% if request.path == profil %}is-active{% endif %}">Messages
+      <a href="{{ messages }}" class="{% if request.path == messages %}is-active{% endif %}">Messages
       {% if notif.message %}
         <sup><span class="icon is-size-7"><i class="fas fa-circle has-text-danger"></i></span></sup>
       {% endif %}
       </a>
     </li>
+    <!-- CRÉER ÉVÉNEMENT -->
+    {% url 'events:new' as new %}
+    <li>
+      <a href="{{ new }}" class="{% if request.path == new %}is-active{% else %}has-text-link{% endif %}">
+        <span class="icon is-size-7"><i class="fas fa-plus"></i></span>
+        Créer un événement
+      </a>
+    </li>
   </ul>
-  <p class="menu-label">Général</p>
+  <p class="menu-label">Activité</p>
   <ul class="menu-list">
     <li>
       <a>Événements
@@ -32,9 +41,6 @@
         <li><a href="">En cours</a></li>
         <!-- EVENT TERMINÉ -->
         <li><a href="">Terminés</a></li>
-        <!-- CRÉER EVENT -->
-        {% url 'events:new' as new %}
-        <li><a href="{{ new }}" class="{% if request.path == new %}is-active{% else %}has-text-info{% endif %}"><span class="icon is-size-7"><i class="fas fa-plus"></i></span>Créer</a></li>
       </ul>
     </li>
   </ul>
