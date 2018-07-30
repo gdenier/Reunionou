@@ -58,6 +58,15 @@
 		{{ form.country }}
 	</div>
 
+	<div class="control">
+		{% for radio in form.invit %}
+		<label for="{{ radio.id_for_label }}" class="radio">
+			{{ radio.tag }}
+			{{ radio.choice_label }}
+		</label>
+		{% endfor %}
+	</div>
+
 	<input type="submit" value="Créer" class="btn btn-primary">
 </form>
 {% endblock account %}

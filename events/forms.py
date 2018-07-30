@@ -40,6 +40,12 @@ class NewForm(forms.ModelForm):
     )
     type_street = forms.ChoiceField(label="type de rue", choices=TYPE_CHOICES)
 
+    INVIT_CHOICES = (
+        ('1', u'Lancer des invitation'),
+        ('0', u'Ne pas lancer d\'invitation'),
+    )
+    invit = forms.ChoiceField(label="Invitation", choices=INVIT_CHOICES, widget=forms.RadioSelect())
+
 class InvitForm(forms.ModelForm):
     """
         Form to creat a guest for an event
