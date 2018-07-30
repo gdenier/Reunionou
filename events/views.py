@@ -12,6 +12,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
 
 from .forms import NewForm, InvitForm, CommentForm
 from index.forms import SignupForm
@@ -42,7 +43,7 @@ def New_view(request):
                 date=form.cleaned_data['date'],
                 token=token_tmp,
                 author=request.user,
-                public=0,
+                public=form.cleaned_data['public'],
                 address="{} {} {}, {} {}".format(
                     form.cleaned_data['street_number'],
                     str(form.cleaned_data['type_street'])[2:-2], # formater dans le POST avec des crochet et paranthese autour donc les enlever avec [2:-2]
@@ -155,6 +156,24 @@ def List_view(request):
     events = Event.objects.filter(public=1)
     return render(request, 'events/list.html', locals())
 
+@login_required
+def my_event(request, method = None):
+    """
+        The function to list all user's event
+        the function use different methode:
+            - all events
+            - event terminated
+            - event running
+    """
+    today = datetime.today()
+    if method == 'ended':
+        events = Event.objects.filter(author=request.user).exclude(Q(date__gte=today)|Q(date=None))
+    elif method == 'current':
+        events = Event.objects.filter(author=request.user).filter(Q(date__gte=today)|Q(date=None))
+    else:
+        events = request.user.event_set.all().order_by('-date')
+
+    return render(request, 'events/my_event.html', locals())
 
 def Register_view(request, token, args='default'):
     """

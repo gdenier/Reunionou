@@ -26,8 +26,8 @@ class NewForm(forms.ModelForm):
         }
 
     NATURE_CHOICES = (
-        ('public', u'Public'),
-        ('prive', u'Privé'),
+        ('1', u'Public'),
+        ('0', u'Privé'),
     )
     nature = forms.ChoiceField(label="Nature", choices=NATURE_CHOICES, widget=forms.RadioSelect())
     street = forms.CharField(label="Rue", max_length=80, widget=forms.TextInput(attrs={'class': 'input', 'placeholder': 'Nom de la rue'}))

@@ -1,0 +1,11 @@
+{% extends "members/account.html" %}
+
+
+{% block title %} {{ block.super }} - Liste des evenements {% endblock %}
+
+{% block account %}
+    {% for event in events %}
+        {{ event.title }}
+        <a href="{% url 'events:detail' event.token %}">Voir</a>
+    {% endfor %}
+{% endblock account %}
