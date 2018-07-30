@@ -1,0 +1,28 @@
+@charset "utf-8"
+
+// Import bulma core
+@import "../bulma/bulma.sass"
+
+// Import extensions
+@import "../bulma/sass/extensions/src/sass/index.sass"
+
+// STYLE
+body
+  display: flex
+  flex-direction: column
+  min-height: 100vh
+
+  & > section.section
+    flex: 1
+
+    &:before
+      content: ""
+      position: absolute
+      top: 0
+      right: 0
+      bottom: 0
+      left: 0
+      z-index: -1
+
+      background-image: url("../img/background.jpg")
+      opacity: 0.1

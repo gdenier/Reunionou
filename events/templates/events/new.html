@@ -34,12 +34,10 @@
 		{{ form.date }}
 	</div>
 
-	<div class="control">
+	<div class="field">
 		{% for radio in form.nature %}
-		<label for="{{ radio.id_for_label }}" class="radio">
-			{{ radio.tag }}
-			{{ radio.choice_label }}
-		</label>
+		{{ radio.tag }}
+		<label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
 		{% endfor %}
 	</div>
 
@@ -56,6 +54,6 @@
 		{{ form.country }}
 	</div>
 
-	<input type="submit" value="Créer" class="btn btn-primary">
+	<input type="submit" value="Créer" class="button is-link">
 </form>
 {% endblock account %}

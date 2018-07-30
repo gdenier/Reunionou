@@ -29,7 +29,7 @@ class NewForm(forms.ModelForm):
         ('public', u'Public'),
         ('prive', u'Privé'),
     )
-    nature = forms.ChoiceField(label="Nature", choices=NATURE_CHOICES, widget=forms.RadioSelect())
+    nature = forms.ChoiceField(label="Nature", choices=NATURE_CHOICES, widget=forms.RadioSelect(attrs={'class': 'is-checkradio is-link'}))
     street = forms.CharField(label="Rue", max_length=80, widget=forms.TextInput(attrs={'class': 'input', 'placeholder': 'Nom de la rue'}))
     street_number = forms.IntegerField(label="N° de rue", widget=forms.TextInput(attrs={'class':'input', 'placeholder': 'N° de rue'}))
     postcode = forms.IntegerField(label="Code Postal", widget=forms.TextInput(attrs={'class':'input', 'placeholder': 'Code Postal'}))
