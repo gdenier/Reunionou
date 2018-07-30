@@ -1,9 +1,0 @@
-{% extends "base.html" %}
-
-{% block title %} {{ block.super }} - Event {% endblock %}
-
-{% block content %}
-    {% for event in events %}
-        <p>{{ event.title }}</p>
-    {% endfor %}
-{% endblock content %}
