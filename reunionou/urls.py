@@ -15,6 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from index.views import e_handler404, e_handler500
+ 
+handler404 = e_handler404
+handler500 = e_handler500
 
 urlpatterns = [
     path('compte/', include('members.urls')),

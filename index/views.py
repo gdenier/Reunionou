@@ -6,6 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db.utils import IntegrityError
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 
 from .forms import SigninForm, SignupForm
 
@@ -75,4 +77,16 @@ def register_view(request):
     
     return render(request, 'index/register.html', locals())
 
-    
+ 
+def e_handler404(request):
+    context = RequestContext(request)
+    response = render_to_response('index/error404.html', context)
+    response.status_code = 404
+    return response
+ 
+ 
+def e_handler500(request):
+    context = RequestContext(request)
+    response = render_to_response('index/error500.html', context)
+    response.status_code = 500
+    return response
