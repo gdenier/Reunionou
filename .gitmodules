@@ -1,0 +1,3 @@
+[submodule "static/bulma/sass/extensions"]
+	path = static/bulma/sass/extensions
+	url = git://github.com/Wikiki/bulma-extensions.git
