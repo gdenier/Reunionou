@@ -43,6 +43,7 @@ def profil_view(request):
     """
         The function to show the user's profil.
     """
+    notif = getNotif(request)
     return render(request, 'members/profil.html', locals())
 
 @login_required(login_url='')
@@ -65,6 +66,7 @@ def change_view(request):
         Secondly:
         The function take data and modify actual value with the right format.
     """
+    notif = getNotif(request)
     if request.method == 'POST':
         form = ChangeForm(request.POST)
         if form.is_valid():
@@ -99,6 +101,7 @@ def getMessage(request):
 
 @login_required
 def message_view(request):
+    notif = getNotif(request)
     messages = request.user.targets.all().order_by('date')
     messages_sent = request.user.message_set.all().order_by('date')
     targets = {}
@@ -158,6 +161,7 @@ def send_message(request):
 def getNotif(request):
     #-- MY EVENT
     notify = {}
+    notify['tt'] = 0
     my_events = Event.objects.filter(author = request.user)
     if my_events:
         notify['my_event'] = {}
@@ -169,12 +173,14 @@ def getNotif(request):
                 if registrant.register_date > request.user.last_login:
                     notify['my_event'][event]['registrant'] += 1
                     notify['my_event']['tt'] += 1
+                    notify['tt'] += 1
             
             notify['my_event'][event]['comment'] = 0
             for comment in event.comment_set.all():
                 if comment.date > request.user.last_login:
                     notify['my_event'][event]['comment'] += 1
                     notify['my_event']['tt'] += 1
+                    notify['tt'] += 1
 
     #-- OTHER EVENT
     other_event = [registrant.event for registrant in request.user.registrant_set.all()]
@@ -187,6 +193,7 @@ def getNotif(request):
             for response in event.comment_set.exclude(response_to=None):
                 if response.response_to.author == request.user:
                     notify['other_event'][event]['response'] += 1
+                    notify['tt'] += 1
 
     #-- MESSAGE
     notify['message'] = {}
@@ -196,8 +203,10 @@ def getNotif(request):
             notify['message'][message.author]
             if message.date > request.user.last_login:
                 notify['message'][message.author] += 1
+                notify['tt'] += 1
         except KeyError:
             if message.date > request.user.last_login:
                 notify['message'][message.author] = 1
+                notify['tt'] += 1
     
     return notify

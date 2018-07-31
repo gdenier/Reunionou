@@ -35,7 +35,10 @@ def login_view(request):
             if form.is_valid():
                 user = authenticate(request, username = form.cleaned_data['username'], password = form.cleaned_data['password'])
                 if user is not None:
+                    date = user.last_login
                     login(request, user)
+                    user.last_login = date
+                    user.save()
                     return HttpResponseRedirect(reverse('members:home'))
                 else:
                     error = True

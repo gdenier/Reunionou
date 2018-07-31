@@ -25,14 +25,40 @@
                 {% if user.is_authenticated %}
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a href="" class="navbar-link">
-                        <p>Notifications<sup><span class="icon is-size-7"><i class="fas fa-circle has-text-danger"></i></span></sup></p>
+                        <p>Notifications<sup>
+                        {% if notif.tt != 0 %}
+                            <span class="icon is-size-7"><i class="fas fa-circle has-text-danger">{{ notif.tt }}</i></span></sup></p>
+                        {% endif %}
                     </a>
-    
-                    <div class="navbar-dropdown is-right">
-                        <a href="" class="navbar-item">
-                            notification 1
-                        </a>
-                    </div>
+
+                    {% for item in notif.my_event %}
+                        {% if item != 'tt' %}    
+                            <div class="navbar-dropdown is-right">
+                                <a href="{% url 'events:detail' item.token %}" class="navbar-item">
+                                    {{ item }}
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% for item in notif.other_event %}
+                        {% if item != 'tt' %}    
+                            <div class="navbar-dropdown is-right">
+                                <a href="{% url 'events:detail' item.token %}" class="navbar-item">
+                                    {{ item }}
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% for item in notif.message %}
+                        {% if item != 'tt' %}    
+                            <div class="navbar-dropdown is-right">
+                                <a href="{% url 'events:detail' item.token %}" class="navbar-item">
+                                    {{ item }}
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
                 </div>
                 {% endif %}
                 <div class="navbar-item has-dropdown is-hoverable">

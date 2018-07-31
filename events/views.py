@@ -17,6 +17,7 @@ from django.db.models import Q
 from .forms import NewForm, InvitForm, CommentForm
 from index.forms import SignupForm
 from .models import Event, Guest, Comment, Like_Dislike, Registrant
+from members.views import getNotif
 
 # Create your views here.
 
@@ -32,7 +33,7 @@ def New_view(request):
         Secondly:
         The function take data and insert them in the database with the right format.
     """
-
+    notif = getNotif(request)
     if request.method == 'POST':
         form = NewForm(request.POST)
         if form.is_valid():
@@ -43,7 +44,7 @@ def New_view(request):
                 date=form.cleaned_data['date'],
                 token=token_tmp,
                 author=request.user,
-                public=form.cleaned_data['public'],
+                public=form.cleaned_data['nature'],
                 address="{} {} {}, {} {}".format(
                     form.cleaned_data['street_number'],
                     str(form.cleaned_data['type_street'])[2:-2], # formater dans le POST avec des crochet et paranthese autour donc les enlever avec [2:-2]
@@ -74,7 +75,7 @@ def Detail_view(request, token):
         The function take all the data necessary on the database
         before send them to the template.
     """
-
+    notif = getNotif(request)
     event = get_object_or_404(Event, token=token)
     inscrits_guest = Guest.objects.filter(pk__in=[registrant.guest.id for registrant in event.registrant_set.exclude(guest=None)])
     inscrits_user = User.objects.filter(pk__in=[registrant.user.id for registrant in event.registrant_set.exclude(user=None)])
@@ -106,6 +107,7 @@ def Change_view(request, token):
         Secondly:
         The function take data and insert them in the database with the right format.
     """
+    notif = getNotif(request)
     if request.user.has_perm("events.change_event_{}".format(token)):
         event = get_object_or_404(Event, token=token, author=request.user)
 
@@ -153,6 +155,7 @@ def List_view(request):
 
         The list can be watched on typical list or on the map.
     """
+    notif = getNotif(request)
     events = Event.objects.filter(public=1)
     return render(request, 'events/list.html', locals())
 
@@ -165,6 +168,7 @@ def my_event(request, method = None):
             - event terminated
             - event running
     """
+    notif = getNotif(request)
     today = datetime.today()
     if method == 'ended':
         events = Event.objects.filter(author=request.user).exclude(Q(date__gte=today)|Q(date=None))
@@ -190,6 +194,7 @@ def Register_view(request, token, args='default'):
                 then go back to the event's detail
             3) we create a guest account linked to the event and it's finished and go back to the event's detail
     """
+    notif = getNotif(request)
     event = Event.objects.get(token=token)
     if request.user.is_authenticated:
         
@@ -270,6 +275,7 @@ def Comment_view(request, token):
         Then there is some permission created for the owner of the comment,
         and the owner of the event.
     """
+    notif = getNotif(request)
     if request.method == 'POST':
         comment = Comment()
         if request.POST.get('father'):
@@ -328,6 +334,7 @@ def Comment_Edit_view(request, token, comment_id):
         The function take data from a form add in ajax
         and modify actual comment data.
     """
+    notif = getNotif(request)
     if request.user.has_perm("events.edit_comment_{}".format(comment_id)):
         if request.method == 'POST':
             com = Comment.objects.get(id=comment_id)

@@ -12,4 +12,5 @@ urlpatterns = [
     path('ajax/getmessage/', views.getMessage, name='ajax_get_message'),
     path('deconnexion/', views.logout_view, name='logout'),
     path('modifier/', views.change_view, name="change"),
+    path('ajax/getnotif/', views.getNotif, name="getnotif"),
 ]
