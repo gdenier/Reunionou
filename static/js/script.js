@@ -1,3 +1,4 @@
+// NAV BURGER MOBILE
 document.addEventListener('DOMContentLoaded', function () {
 
   // Get all "navbar-burger" elements
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 })
 
+// DELETE NOTIFICATION
 if (document.getElementsByClassName("delete").length > 0) {
   document.getElementsByClassName("delete")[0].addEventListener("click", function() {
   
@@ -32,3 +34,13 @@ if (document.getElementsByClassName("delete").length > 0) {
   
   })
 }
+
+// BULMA CALENDAR
+document.addEventListener('DOMContentLoaded', function () {
+  var datePickers = bulmaCalendar.attach('[name="date"]', {
+    overlay: true,
+    minDate: '2018-01-01',
+    maxDate: '2018-12-31'
+  });
+  // datePickers now contains an Array of all datePicker instances
+});

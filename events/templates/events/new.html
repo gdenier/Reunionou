@@ -8,6 +8,7 @@
 <hr>
 <form method="POST" action="{% url 'events:new' %}">
 	{% csrf_token %}
+	<!-- TITLE -->
 	<div class="field">
 		<div class="control has-icons-left">
 			{{ form.title }}
@@ -16,22 +17,26 @@
 			</span>
 		</div>
 	</div>
-
-	<div class="input-group">
-		<div class="input-group-addon">
-			<span class="input-group-text"><i class="fas fa-file-alt"></i></span>
+	<!-- DESCRIPTION -->
+	<div class="field">
+		<div class="control has-icons-left">
+			{{ form.description }}
+			<span class="icon is-small is-left">
+				<i class="fas fa-file-alt"></i>
+			</span>
 		</div>
-		{{ form.description }}
 	</div>
-
-	<div class="input-group">
+	<!-- DATE -->
+	<div class="field">
 		{% if form.date.errors %}
-			{{ form.date.errors }} <!-- c'est le format pour faire apparaitre les messages d'erreur a voir si tu veux en faire afficher d'autres -->
+			{{ form.date.errors }}
 		{% endif %}
-		<div class="input-group-addon">
-			<span class="input-group-text"><i class="fas fa-calendar"></i></span>
+		<div class="control has-icons-left">
+			{{ form.date }}
+			<span class="icon is-small is-left">
+				<i class="fas fa-calendar"></i>
+			</span>
 		</div>
-		{{ form.date }}
 	</div>
 
 	<div class="field">
