@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 
-{% load static %}
-
 {% block title %} {{ block.super }} {% endblock %}
 
 {% block content %}
@@ -14,8 +12,8 @@
 		</div>
 		<div class="column">
       <!-- CONTENT -->
-      {% block account %}
-      {% endblock account %}
+      {% block account_content %}
+      {% endblock account_content %}
 		</div>
 	</div>
 </div>

@@ -1,10 +1,8 @@
 import uuid
 from datetime import datetime
-import requests
-import json
 
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.urls import reverse
 from django.contrib.auth.models import User, Permission
 from django.shortcuts import get_object_or_404
@@ -34,6 +32,7 @@ def New_view(request):
         The function take data and insert them in the database with the right format.
     """
     notif = getNotif(request)
+    
     if request.method == 'POST':
         form = NewForm(request.POST)
         if form.is_valid():
@@ -77,13 +76,10 @@ def Detail_view(request, token):
     """
     notif = getNotif(request)
     event = get_object_or_404(Event, token=token)
-    inscrits_guest = Guest.objects.filter(pk__in=[registrant.guest.id for registrant in event.registrant_set.exclude(guest=None)])
-    inscrits_user = User.objects.filter(pk__in=[registrant.user.id for registrant in event.registrant_set.exclude(user=None)])
+    inscrits = event.guest_set.all()
     comments = event.comment_set.all().order_by('date')
-    comments = sort_comment(comments)
+    comments = trie_comment(comments)
     form = CommentForm()
-
-    address = event.address.replace(' ', '%20') #to coresspond to the url requirement
 
     if request.user.is_authenticated:
         
@@ -108,8 +104,9 @@ def Change_view(request, token):
         The function take data and insert them in the database with the right format.
     """
     notif = getNotif(request)
+    
     if request.user.has_perm("events.change_event_{}".format(token)):
-        event = get_object_or_404(Event, token=token, author=request.user)
+        event = get_object_or_404(Event, token=token, auteur_id=request.user.id)
 
         error = False
 
@@ -120,13 +117,7 @@ def Change_view(request, token):
                 event.title=form.cleaned_data['title']
                 event.description=form.cleaned_data['description']
                 event.date=form.cleaned_data['date']
-                event.address="{} {} {}, {} {}".format(
-                    form.cleaned_data['street_number'],
-                    str(form.cleaned_data['type_street'])[2:-2],
-                    form.cleaned_data['street'],
-                    form.cleaned_data['postcode'],
-                    form.cleaned_data['country'],
-                )
+                event.address=form.cleaned_data['address']
 
                 event.save()
 
@@ -137,11 +128,7 @@ def Change_view(request, token):
                 'title': event.title,
                 'description': event.description,
                 'date': event.date,
-                'street_number': int(event.address.split(',')[0].split(' ')[0]),
-                'type_street': event.address.split(',')[0].split(' ')[1],
-                'street': event.address.split(',')[0][(event.address.split(',')[0].find(event.address.split(',')[0].split(' ')[1]))+len(event.address.split(',')[0].split(' ')[1])+1:], # selection de la ligne a partir de <type de rue> jusqu'a la virgule
-                'postcode': event.address.split(', ')[1].split(' ')[0],
-                'country': event.address.split(', ')[1].split(' ')[1],
+                'address': event.address,
             })
         
         return render(request, 'events/change.html', locals())
@@ -201,12 +188,14 @@ def Register_view(request, token, args='default'):
         #inscription avec info perso du compte
         if args == 'accept':
             
-            registrant = Registrant(
-                user = request.user,
-                guest = None,
-                event = event
+            guest = Guest(
+                last_name=request.user.last_name,
+                first_name=request.user.first_name,
+                email=request.user.email,
+                event=event,
+                user=request.user,
             )
-            registrant.save()
+            guest.save()
 
             return HttpResponseRedirect(reverse('events:detail', args=[token]))
 
@@ -221,13 +210,15 @@ def Register_view(request, token, args='default'):
                     if form.cleaned_data['password'] == form.cleaned_data['password_conf']:
                         user = User.objects.create_user(form.cleaned_data['username'], form.cleaned_data['email'], form.cleaned_data['password'])
                         login(request, user)
-                        
-                        registrant = Registrant(
-                            user = user,
-                            guest = None,
-                            event = event
+
+                        guest = Guest(
+                            last_name=user.first_name,
+                            first_name=user.first_name,
+                            email=user.email,
+                            event=event,
+                            user=request.user,
                         )
-                        registrant.save()
+                        guest.save()
                         
                         return HttpResponseRedirect(reverse('events:detail', args=[token]))
             else:
@@ -246,15 +237,9 @@ def Register_view(request, token, args='default'):
                         age=form.cleaned_data['age'],
                         email=form.cleaned_data['email'],
                         password=make_password(form.cleaned_data['password'], '100000'),
+                        event=event,
                     )
                     guest.save()
-
-                    registrant = Registrant(
-                        user = None,
-                        guest = guest,
-                        event = event
-                    )
-                    registrant.save()
 
                     return HttpResponseRedirect(reverse('events:detail', args=[token]))
             else:
@@ -314,10 +299,7 @@ def Comment_view(request, token):
        
     return HttpResponseRedirect(reverse('events:detail', args=[token]))
 
-def sort_comment(comments, sort=None):
-    """
-        A simple function for sort comments
-    """
+def trie_comment(comments, trie=None):
     comments_bis = []
     for comment in comments:
         if comment.response_to == None:
@@ -348,14 +330,6 @@ def Comment_Edit_view(request, token, comment_id):
 
 @login_required
 def Delete_com_view(request, token, comment_id):
-    """
-        The function to delete a comment.
-
-        The function can be call by the owner of the comment and the owner of the event.
-
-        The function don't delete the comment but set the <deleted> field to True.
-    """
-
     if request.user.has_perm("events.delete_comment_{}".format(comment_id)):
         comment = Comment.objects.get(pk=comment_id)
         comment.deleted = True
@@ -366,99 +340,14 @@ def Delete_com_view(request, token, comment_id):
 
 @login_required
 def Like_com_view(request, token, comment_id):
-    """
-        The function to like a comment.
-
-        The function increment the like field in Comment table.
-
-        The function also create a line in Like_Dislike table to make the link
-        between the comment and the user who like.
-    """
-    try:
-        like = Like_Dislike.objects.get(user=request.user, com=Comment.objects.get(pk=comment_id))
-        if like.value == False:
-            comment = Comment.objects.get(pk=comment_id)
-            comment.like += 1
-            if comment.dislike > 0:
-                comment.dislike -= 1
-            comment.save()
-
-            like.value = True
-            like.save()
-    except Like_Dislike.DoesNotExist:
-        
-        comment = Comment.objects.get(pk=comment_id)
-        comment.like += 1
-        comment.save()
-
-        like = Like_Dislike(user=request.user, com=Comment.objects.get(pk=comment_id), value=True)
-        like.save()
-
+    comment = Comment.objects.get(pk=comment_id)
+    comment.like += 1
+    comment.save()
     return HttpResponseRedirect(reverse('events:detail', args=[token]))
 
 @login_required
 def Dislike_com_view(request, token, comment_id):
-    """
-        The function to dislike a comment.
-
-        The function increment the dislike field in Comment table.
-
-        The function also create a line in Like_Dislike table to make the link
-        between the comment and the user who dislike.
-    """
-    try:
-        dislike = Like_Dislike.objects.get(user=request.user, com=Comment.objects.get(pk=comment_id))
-        if dislike.value == True:
-            comment = Comment.objects.get(pk=comment_id)
-            if comment.like > 0:
-                comment.like -= 1
-            comment.dislike += 1
-            comment.save()
-
-            dislike.value = False
-            dislike.save()
-
-    except Like_Dislike.DoesNotExist:
-        comment = Comment.objects.get(pk=comment_id)
-        comment.dislike += 1
-        comment.save()
-
-        dislike = Like_Dislike(user=request.user, com=Comment.objects.get(pk=comment_id), value=False)
-        dislike.save()
-
+    comment = Comment.objects.get(pk=comment_id)
+    comment.dislike += 1
+    comment.save()
     return HttpResponseRedirect(reverse('events:detail', args=[token]))
-
-def getSetPos(request):
-    borne_inf = [request.GET['lat_inf'], request.GET['lng_inf']]
-    borne_sup = [request.GET['lat_sup'], request.GET['lng_sup']]
-
-    events = Event.objects.filter(public=True)
-    events_to_send = {}
-    
-    for event in events:
-        result = requests.get("https://nominatim.openstreetmap.org/search?format=json&limit=3&q={}".format(event.address))
-        result = result.json()
-        
-        if borne_inf[0] > borne_sup [0] and borne_inf[1] < borne_sup[1]:
-            if result[0]['lat'] <= borne_inf[0] and result[0]['lat'] >= borne_sup[0] and result[0]['lon'] >= borne_inf[1] and result[0]['lon'] <= borne_sup[1]:
-                events_to_send[event.token] = {'lat': result[0]['lat'], 'lng': result[0]['lon'], 'title': event.title, 'address': event.address}
-        
-        elif borne_inf[0] > borne_sup[0] and borne_inf[1] > borne_sup[1]:
-            if (result[0]['lon'] > borne_inf[1] and result[0]['lon'] < 90) or (result[0]['lon'] < borne_sup[1] and result[0]['lon'] > -90):
-                events_to_send[event.token] = {'lat': result[0]['lat'], 'lng': result[0]['lon'], 'title': event.title, 'address': event.address}
-        
-        elif borne_inf[0] < borne_sup[0] and borne_inf[1] < borne_sup[1]:
-            if (result[0]['lat'] > borne_inf[0] and result[0]['lat'] < 180) or (result[0]['lat'] < borne_sup[0] and result[0]['lat'] > -180):
-                events_to_send[event.token] = {'lat': result[0]['lat'], 'lng': result[0]['lon'], 'title': event.title, 'address': event.address}
-
-        else:
-            if result[0]['lat'] >= borne_inf[0] and result[0]['lat'] <= borne_sup[0] and result[0]['lon'] <= borne_inf[1] and result[0]['lon'] >= borne_sup[1]:
-                events_to_send[event.token] = {'lat': result[0]['lat'], 'lng': result[0]['lon'], 'title': event.title, 'address': event.address}
-    
-    jsonarray = json.dumps(events_to_send, ensure_ascii=False)
-    return JsonResponse(jsonarray, safe=False)
-        
-        
-
-
-    

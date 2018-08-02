@@ -10,14 +10,14 @@
                 <div class="panel">
                     <h1>Modifier l'Evenement</h1>
                     <hr>
-                    <form method="POST" action="{% url 'events:change' event.token %}">
+                    <form method="POST" action="{% url 'events:change' event.id %}">
                         {% csrf_token %}
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon">
                                     <span class="input-group-text"><i class="fas fa-clipboard"></i></span>
                                 </div>
-                                {{ form.title }}
+                                {{ form.titre }}
                             </div>
 
                             <div class="input-group">
@@ -41,11 +41,7 @@
                                 <div class="input-group-addon">
                                     <span class="input-group-text"><i class="fas fa-map-marker"></i></span>
                                 </div>
-                                {{ form.street_number }}
-                                {{ form.type_street }}
-                                {{ form.street }}
-                                {{ form.postcode }}
-                                {{ form.country }}
+                                {{ form.adresse }}
                             </div>
 
                             <input type="submit" value="modifier" class="btn btn-primary">

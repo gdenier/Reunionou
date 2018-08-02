@@ -14,17 +14,11 @@ from .forms import SigninForm, SignupForm
 # Create your views here.
 
 def Home_view(request):
-    """
-        The function to show the home page of the website
-    """
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('members:home'))
     return render(request, 'index/home.html')
 
 def login_view(request):
-    """
-        The function to authenticate the user. And to redirect him to his dashboard.
-    """
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('members:home'))
     else:
@@ -49,9 +43,6 @@ def login_view(request):
     return render(request, 'index/login.html', locals())
 
 def register_view(request):
-    """
-        The function to register the user. And to redirect him to the login page.
-    """
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('members:home'))
     else:

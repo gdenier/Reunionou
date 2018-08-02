@@ -1,40 +1,22 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 
 from django.contrib.auth import  logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.core import serializers
 
-
-from events.models import Event, Guest, Comment, Registrant
-from .models import Message
-from .forms import ChangeForm, SendMessageForm
+from events.models import Event
+from .forms import ChangeForm
 
 # Create your views here.
 
 @login_required
 def home_view(request):
-    """
-        The function to show the user's dashboard.
-    """
-    my_events = request.user.event_set.all().order_by('-date')[:4] # les 4 evenemtns les plus proche que l'utilisateur organise
-    
-    guest_events = [guest.event for guest in Registrant.objects.filter(user=request.user).order_by('-event__date')[:4]] # les 4 evenement les plus proches auquel l'utilisateur est inscrit
+    events = request.user.event_set.all()
 
-    messages = request.user.targets.all().order_by('-date')[:4] # les 4 derniers message que l'utilisateurs a recu
-    
-    responses = Comment.objects.exclude(response_to = None).order_by('-date') # les 4 dernieres reposnes que l'utilisateur a recu
-    com_reponses = []
-    for response in responses:
-        if len(com_reponses) > 3:
-            break
-        elif response.response_to.author == request.user:
-            com_reponses.append(response)
-
-    notif = getNotif(request)
+    event_exist = True if len(events) >= 0 else False
 
     return render(request, 'members/home.html', locals())
 
@@ -48,9 +30,6 @@ def profil_view(request):
 
 @login_required(login_url='')
 def logout_view(request):
-    """
-        The function to logout the user and to redirect him to the login page.
-    """
     logout(request)
     messages.success(request, "Vous avez été déconnecté avec succès")
     return HttpResponseRedirect(reverse('index:login'))
@@ -67,6 +46,7 @@ def change_view(request):
         The function take data and modify actual value with the right format.
     """
     notif = getNotif(request)
+    
     if request.method == 'POST':
         form = ChangeForm(request.POST)
         if form.is_valid():

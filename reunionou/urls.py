@@ -21,7 +21,7 @@ handler404 = e_handler404
 handler500 = e_handler500
 
 urlpatterns = [
-    path('compte/', include('members.urls')),
+    path('accounts/', include('members.urls')),
     path('events/', include('events.urls')),
     path('admin/', admin.site.urls),
     path('', include('index.urls')),

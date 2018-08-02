@@ -1,17 +1,9 @@
 {% extends "base.html" %}
 
-{% load static %}
-
 {% block title %} {{ block.super }} - Event {% endblock %}
 
 {% block content %}
     {% for event in events %}
-        <p>{{ event.title }}
-        {{ event.date }}
-        {{ event.description }}
-        <a href="{% url 'events:detail' event.token %}">Voir</a></p>
+        <p>{{ event.title }}</p>
     {% endfor %}
-
-    <div id="mapid" style="height: 500px;"></div>
-    <script type="text/javascript" src="{% static 'js/map_event.js' %}"></script>
 {% endblock content %}

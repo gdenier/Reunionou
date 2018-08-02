@@ -3,53 +3,5 @@
 {% block title %} {{ block.super }} - Dashboard {% endblock title %}
 {% block page_name %}dashboard{% endblock %}
 
-{% block account %}
-	<div class="tile is-ancestor">
-		<div class="tile is-6 is-vertical is-parent">
-			<div class="tile is-child box">
-				<p class="title">Mes évènements</p>
-				{% for event in my_events %}
-					<div>
-						{{ event.title }}
-						{{ event.date }}
-						{{ event.description }}
-						<a href="{% url 'events:detail' event.token %}">Voir</a>
-					</div>
-				{% endfor %}
-			</div>
-			<div class="tile is-child box">
-				<p class="title">Evenements où je suis inscrit</p>
-				{% for event in guest_events %}
-					<div>
-						{{ event.title }}
-						{{ event.date }}
-						{{ event.description }}
-						<a href="{% url 'events:detail' event.token %}">Voir</a>
-					</div>
-				{% endfor %}
-			</div>
-		</div>
-		<div class="tile is-vertical is-parent">
-			<div class="tile is-child box">
-				<p class="title">Messages</p>
-				{% for message in messages %}
-					<div>
-						{{ message.content }}
-						{{ message.date }}
-						<a href="{% url 'members:message' %}">Voir</a>
-					</div>
-				{% endfor %}
-			</div>
-			<div class="tile is-child box">
-				<p class="title">Réponse commentaire</p>
-				{% for response in com_reponses %}
-					<div>
-						{{ response.core }}
-						{{ response.date }}
-						<a href="{% url 'events:detail' response.event.token %}">Voir</a>
-					</div>
-				{% endfor %}
-			</div>
-		</div>
-	</div>
-{% endblock account %}
+{% block account_content %}
+{% endblock account_content %}

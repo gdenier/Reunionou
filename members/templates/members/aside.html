@@ -10,14 +10,7 @@
     {% url 'members:profil' as profil %}
     <li><a href="{{ profil }}" class="{% if request.path == profil %}is-active{% endif %}">Profil</a></li>
     <!-- MESSAGES -->
-    {% url 'members:message' as profil %}
-    <li>
-      <a href="{{ profil }}" class="{% if request.path == profil %}is-active{% endif %}">Messages
-      {% if notif.message %}
-        <sup><span class="icon is-size-7"><i class="fas fa-circle has-text-danger"></i></span></sup>
-      {% endif %}
-      </a>
-    </li>
+    <li><a href="">Messages</a></li>
   </ul>
   <p class="menu-label">Général</p>
   <ul class="menu-list">
@@ -33,8 +26,7 @@
         <!-- EVENT TERMINÉ -->
         <li><a href="{% url 'events:my_event' 'ended' %}">Terminés</a></li>
         <!-- CRÉER EVENT -->
-        {% url 'events:new' as new %}
-        <li><a href="{{ new }}" class="{% if request.path == new %}is-active{% else %}has-text-info{% endif %}"><span class="icon is-size-7"><i class="fas fa-plus"></i></span>Créer</a></li>
+        <li><a href="{% url 'events:new' %}" class="has-text-info"><span class="icon is-size-7"><i class="fas fa-plus"></i></span>Créer</a></li>
       </ul>
     </li>
   </ul>

@@ -1,20 +1,16 @@
-from django import forms
+from django.forms import ModelForm, Textarea
 from django.contrib.admin.widgets import AdminDateWidget
 from django.utils.translation import gettext_lazy as _
 
 from .models import Event, Guest, Comment
 
-class NewForm(forms.ModelForm):
-    """
-        Form to creat or change an event
-    """
+class NewForm(ModelForm):
+
     class Meta:
         model = Event
-        fields = ['title', 'description', 'date']
+        fields = ['title', 'description', 'date', 'address']
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'input', 'placeholder': 'Titre de l\'évènement'}),
-            'description': forms.Textarea(attrs={'class': 'input', 'placeholder': 'Description de l\'évènement'}),
-            'date': forms.DateTimeInput(attrs={'class': 'input', 'placeholder': 'Date de l\'évènement'}),
+            'description': Textarea(attrs={'cols':80, 'rows':20, 'placeholder': 'ceci est la description'}), #tinyMCE
         }
         help_texts = {
             'description': _("Some useful help text"),
@@ -46,18 +42,13 @@ class NewForm(forms.ModelForm):
     )
     invit = forms.ChoiceField(label="Invitation", choices=INVIT_CHOICES, widget=forms.RadioSelect())
 
-class InvitForm(forms.ModelForm):
-    """
-        Form to creat a guest for an event
-    """
+class InvitForm(ModelForm):
+  
     class Meta:
         model = Guest
         fields = ['last_name', 'first_name', 'age', 'email', 'password']
 
-class CommentForm(forms.ModelForm):
-    """
-        Form to write a comment for an event
-    """
+class CommentForm(ModelForm):
     class Meta:
         model = Comment
         fields = ['core']
