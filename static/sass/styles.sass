@@ -7,6 +7,21 @@
 @import "../bulma/sass/extensions/src/sass/index.sass"
 
 // STYLE
+$positions: ["top", "right", "bottom", "left"]
+
+@each $position in $positions
+  .has-margin-#{$position}
+    margin-#{$position}: 1.5rem
+
+$positions: ("start": "flex-start", "center": "center", "end": "flex-end")
+
+@each $position, $attribute in $positions
+  .has-items-#{$position}
+    align-items: #{$attribute}
+
+.is-flex-1
+  flex: 1
+
 body
   display: flex
   flex-direction: column

@@ -13,7 +13,7 @@ class NewForm(forms.ModelForm):
         fields = ['title', 'description', 'date']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'input', 'placeholder': 'Titre de l\'évènement'}),
-            'description': forms.Textarea(attrs={'class': 'input', 'placeholder': 'Description de l\'évènement'}),
+            'description': forms.Textarea(attrs={'class': 'textarea', 'placeholder': 'Description de l\'évènement', 'rows': '4'}),
             'date': forms.DateTimeInput(attrs={'class': 'input', 'placeholder': 'Date de l\'évènement'}),
         }
         help_texts = {
