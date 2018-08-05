@@ -1,14 +1,14 @@
 {% extends "members/account.html" %}
 
 {% block title %} {{ block.super }} - Dashboard {% endblock title %}
-{% block page_name %}dashboard{% endblock %}
+{% block page_name %}dashboard{% endblock page_name %}
 
 {% block account %}
 <section class="hero is-info is-bold has-margin-bottom">
 	<div class="hero-body">
 		{% now "H" as curr_h %}
 		<h1 class="title">{% if curr_h >= "18" and curr_h <= "00" or curr_h >= "00" and curr_h <= "04" %}Bonsoir{% else %}Bonjour{% endif %} {{ user.first_name }}.</h1>
-		<h2 class="subtitle">Qu'as tu de fais hier, aujourd'hui ou que feras-tu demain?</h2>
+		<h2 class="subtitle">Qu'as tu prévu pour demain?</h2>
 	</div>
 </section>
 

@@ -1,7 +1,7 @@
 {% extends "base_with_hero.html" %}
 
 {% block title %}{{ block.super }} - Register{% endblock title %}
-{% block page_name %}register{% endblock %}
+{% block page_name %}register{% endblock page_name %}
 
 {% block content %}
 <div class="container">
@@ -54,7 +54,7 @@
             </div>
           </div>
           <div class="has-text-right">
-            <input type="submit" value="Inscription" class="button is-primary" />
+            <input type="submit" value="Inscription" class="button is-link" />
           </div>
         </form>
       </div>

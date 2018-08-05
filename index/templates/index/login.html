@@ -1,7 +1,7 @@
 {% extends "base_with_hero.html" %}
 
-{% block title %}{{ block.super }} - Login{% endblock %}
-{% block page_name %}login{% endblock %}
+{% block title %}{{ block.super }} - Login{% endblock title %}
+{% block page_name %}login{% endblock page_name %}
 
 {% block content %}
 <div class="container">
@@ -39,7 +39,7 @@
 					</div>
 					<a href="{#% url 'index:forgot_password' %#}">Mot de passe oublié?</a>
 					<div class="has-text-right">
-						<input type="submit" value="Connexion" class="button is-primary"/>
+						<input type="submit" value="Connexion" class="button is-link"/>
 					</div>
 				</form>
 			</div>
