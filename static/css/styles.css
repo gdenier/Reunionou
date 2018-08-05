@@ -19895,4 +19895,8 @@ body > section.section:before {
   background-image: url("../img/background.jpg");
   opacity: 0.1;
 }
+
+body .map {
+  height: 100%;
+}
 /*# sourceMappingURL=styles.css.map */

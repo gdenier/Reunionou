@@ -1,6 +1,7 @@
-// NAV BURGER MOBILE
 document.addEventListener('DOMContentLoaded', function () {
-
+  
+  // NAV BURGER MOBILE
+  
   // Get all "navbar-burger" elements
   var $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0)
 
